@@ -151,7 +151,7 @@ merge/
 │   ├── qwen2.5-coder-7b-instruct-q4_k_m.gguf  # Модель Компилятора (~4.7 GB)
 │   └── smollm2-3.6b-instruct-q4_k_m.gguf      # Модель Исполнителя/Критика (~2.5 GB)
 │
-├── docs/                              # 📚 Полная документация (12 файлов)
+├── docs/                              # 📚 Полная документация (13 файлов)
 │   ├── 00_OVERVIEW.md                 #   Общая карта системы
 │   ├── 01_llama_cpp_setup.md          #   Установка llama.cpp
 │   ├── 02_model_translator.md         #   Спецификация Переводчика
@@ -164,7 +164,8 @@ merge/
 │   ├── 09_model_critic.md             #   Спецификация Критика
 │   ├── 10_paperclip_critic.md         #   Интеграция Критика (Closed-Loop Retry)
 │   ├── 11_task_decomposer.md          #   Декомпозиция задач в DAG
-│   └── 12_dag_orchestrator.md         #   Графовая оркестрация
+│   ├── 12_dag_orchestrator.md         #   Графовая оркестрация
+│   └── 13_codebase_analyzer.md        #   AST-индекс и семантический поиск по коду
 │
 ├── data/                              # 📁 Данные для инструментов
 │   └── pipeline_state.json            #   Состояние пайплайна (для Critic)
@@ -181,9 +182,10 @@ merge/
     ├── compiler/                      # 📦 Адаптер Компилятора (index.js + compiler.gbnf)
     │   └── index.js
     │   └── compiler.gbnf
-    ├── executor/                      # 📦 Адаптер Исполнителя (index.js + searchEngine.js + executor.gbnf)
+    ├── executor/                      # 📦 Адаптер Исполнителя (index.js + searchEngine.js + executor.gbnf + codebaseAnalyzer.js)
     │   ├── index.js
     │   ├── searchEngine.js
+    │   ├── codebaseAnalyzer.js
     │   └── executor.gbnf
     └── critic/                        # 📦 Адаптер Критика (index.js + critic.gbnf)
         ├── index.js
@@ -209,6 +211,7 @@ merge/
 | [`10_paperclip_critic.md`](docs/10_paperclip_critic.md) | Полный код, регистрация, pipeline diagram |
 | [`11_task_decomposer.md`](docs/11_task_decomposer.md) | Декомпозиция составных задач, API taskPlanner.js, алгоритмы |
 | [`12_dag_orchestrator.md`](docs/12_dag_orchestrator.md) | Графовая оркестрация, топологическая сортировка, retry нод |
+| [`13_codebase_analyzer.md`](docs/13_codebase_analyzer.md) | AST-индекс, семантический поиск по коду, Babel-парсер |
 
 ---
 

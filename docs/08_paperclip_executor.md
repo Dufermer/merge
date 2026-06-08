@@ -94,6 +94,20 @@ const TOOLS = {
     const files = fs.readdirSync(DATA_DIR);
     return { data: files, count, directory, error: null, logs: [...] };
   },
+
+  /**
+   * codebase_search — семантический поиск по коду через AST-анализ.
+   * Требует: npm install @babel/parser @babel/traverse в папке плагина executor.
+   * Модуль: codebaseAnalyzer.js
+   * Алгоритм: scanProjectStructure → buildAstIndex → semanticSearch → extractCodeBlock
+   * Поддерживаемые языки: JS/TS (Babel AST), Python, Go, Rust, Java/C#, Ruby, PHP (regex)
+   * params: { query: "...", target_dir: "..." }
+   */
+  codebase_search: async (params) => {
+    // сканирует проект, строит AST-индекс, ищет функции/классы
+    // возвращает топ-3 результата с confidence score
+    // извлекает фрагмент кода для лучшего совпадения
+  },
 };
 ```
 
