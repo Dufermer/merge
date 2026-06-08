@@ -305,8 +305,8 @@ function buildFallbackDecision(task, context) {
     };
   }
 
-  // File read detection — используем ОРИГИНАЛЬНЫЙ task (не lowercase) для путей
-  if (taskLower.includes("прочитай") || taskLower.includes("читай") || taskLower.includes("read") || taskLower.includes("файл") || taskLower.includes("открой")) {
+  // File read detection — requires action verb, not just "файл"
+  if (taskLower.includes("прочитай") || taskLower.includes("читай") || taskLower.includes("read") || taskLower.includes("открой")) {
     // Извлекаем путь из ОРИГИНАЛЬНОГО task (для сохранения регистра Windows-путей)
     const pathRegex = /(?:data[\/\\]|файл\s+)?([\w.:\/\\-]+(?:\.\w+))/i;
     const pathMatch = task.match(pathRegex);

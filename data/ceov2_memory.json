@@ -99,6 +99,21 @@
       "task": "сколько будет 15*3",
       "result": "15*3 = 45",
       "timestamp": "2026-06-08T09:35:15.026Z"
+    },
+    {
+      "task": "прочитай файл data/production\\_config.json, найди там порт, умножь номер порта на 5 и составь отчёт: какой был порт и какой результат умножения",
+      "result": "Error after 3 attempts: File read error: ENOENT: no such file or directory, open 'C:\\Users\\rus\\Desktop\\merge\\data\\production\\_config.json'",
+      "timestamp": "2026-06-08T10:10:44.023Z"
+    },
+    {
+      "task": "посчитайте мне сколько файлов на рабочем столе (папка\\=файл)",
+      "result": "Test content for heartbeat\n",
+      "timestamp": "2026-06-08T10:20:47.968Z"
+    },
+    {
+      "task": "сколько файлов в директории data/?",
+      "result": "Test content for heartbeat\n",
+      "timestamp": "2026-06-08T10:23:25.133Z"
     }
   ]
 }
