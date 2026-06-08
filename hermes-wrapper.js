@@ -141,47 +141,85 @@ function buildToolsDescription() {
 }
 
 async function think(context) {
+  // Try fallback FIRST for known task types (reliable, no LLM needed)
+  const fallbackDecision = buildFallbackDecision(context.task, context);
+
+  // If fallback can handle it (has a tool to call), use it immediately
+  if (fallbackDecision.tool && !fallbackDecision.error) {
+    log(`[THINK] Fallback decision: ${fallbackDecision.tool}`);
+    return fallbackDecision;
+  }
+
+  // If fallback says done (e.g., max errors reached), respect that
+  if (fallbackDecision.done) {
+    log(`[THINK] Fallback: done`);
+    return fallbackDecision;
+  }
+
+  // Only use LLM for unknown tasks that fallback can't handle
   const toolsDesc = buildToolsDescription();
+  const historyContext = context.history
+    .map((h) => {
+      if (h.tool) return `Called ${h.tool}: ${h.result || h.error}`;
+      return h.result || "";
+    })
+    .filter(Boolean)
+    .join("\n");
 
   const systemPrompt =
-    "You are an AI agent that solves tasks by calling tools. You have access to:\n" +
+    "You are an AI agent. Decide the NEXT action based on the task and previous results.\n" +
+    "Available tools:\n" +
     `${toolsDesc}\n\n` +
-    "For each turn, output ONLY a JSON object with:\n" +
-    '  { "thought": "your reasoning", "tool": "tool_name", "params": {...}, "done": false }\n' +
-    'Set "done": true when you have the final answer and no more tools need to be called.\n' +
-    "If the previous result had an error, try a different approach.\n" +
-    "Output ONLY valid JSON, no markdown, no explanation.";
+    "IMPORTANT: Read the user's task CAREFULLY. Use EXACT file paths from the request.\n" +
+    'Examples:\n' +
+    '  User: "прочитай файл data/test.txt" → {"tool":"read_file","params":{"path":"data/test.txt"},"done":false}\n' +
+    '  User: "сколько будет 2+2" → {"tool":"calculate","params":{"expression":"2+2"},"done":false}\n' +
+    '  User: "2+2" → {"tool":"calculate","params":{"expression":"2+2"},"done":false}\n\n' +
+    'Output ONLY valid JSON: { "tool": "tool_name", "params": {...}, "done": false }';
 
   const messages = [
     { role: "system", content: systemPrompt },
-    { role: "user", content: `Task: ${context.task}` },
-    ...context.history.map((h) => ({
-      role: "assistant",
-      content: JSON.stringify({ thought: h.thought, tool: h.tool, result: h.result }),
-    })),
-    { role: "user", content: "What is your next action?" },
+    { role: "user", content: context.task },
+    ...(historyContext ? [{ role: "user", content: `Previous results:\n${historyContext}\n\nWhat is your next action?` }] : []),
   ];
 
-  const result = await callLLM(messages, 0.3, 512);
+  const result = await callLLM(messages, 0.2, 256);
 
   if (!result.ok) {
-    return buildFallbackDecision(context.task, context);
+    return { thought: "LLM error, using fallback", tool: null, params: {}, done: true, error: result.error };
   }
 
-  // Try to parse JSON
   const content = result.content.trim();
   const jsonMatch = content.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
-    return buildFallbackDecision(context.task, context);
+    return { thought: "LLM returned no JSON", tool: null, params: {}, done: true, error: "No JSON in response" };
   }
 
   try {
     const decision = JSON.parse(jsonMatch[0]);
-    // Validate decision has required fields
-    if (decision.tool && !decision.params) decision.params = {};
-    return decision;
-  } catch {
-    return buildFallbackDecision(context.task, context);
+    if (!decision.tool) {
+      return { thought: "LLM returned no tool", tool: null, params: {}, done: true };
+    }
+
+    // Validate params based on tool type
+    if (decision.tool === "read_file" && (!decision.params || !decision.params.path)) {
+      log("[THINK] LLM returned read_file without path, using fallback");
+      return buildFallbackDecision(context.task, context);
+    }
+
+    if (decision.tool === "calculate" && (!decision.params || !decision.params.expression)) {
+      log("[THINK] LLM returned calculate without expression, using fallback");
+      return buildFallbackDecision(context.task, context);
+    }
+
+    return {
+      thought: decision.thought || `Calling ${decision.tool}`,
+      tool: decision.tool,
+      params: decision.params || {},
+      done: decision.done || false,
+    };
+  } catch (e) {
+    return { thought: "JSON parse error", tool: null, params: {}, done: true, error: e.message };
   }
 }
 
@@ -218,11 +256,12 @@ function buildFallbackDecision(task, context) {
 
   // File read detection
   if (taskLower.includes("прочитай") || taskLower.includes("читай") || taskLower.includes("read") || taskLower.includes("файл") || taskLower.includes("открой")) {
-    // Try to extract path from task
-    const pathMatch = taskLower.match(/(?:data[\/\\]|файл\s+)?([\w.\/\\-]+(?:\.\w+))/);
+    // Try to extract path from task — normalize backslashes
+    const normalizedTask = taskLower.replace(/\\\\/g, "/");
+    const pathMatch = normalizedTask.match(/(?:data[\/\\]|файл\s+)?([\w.\/\\-]+(?:\.\w+))/);
     const basePath = "C:\\Users\\rus\\Desktop\\merge\\";
     const filePath = pathMatch
-      ? (pathMatch[0].includes(":") ? pathMatch[0] : basePath + pathMatch[1])
+      ? (pathMatch[0].includes(":") ? pathMatch[0].replace(/\\/g, "\\\\") : basePath + pathMatch[1])
       : basePath + "data\\test.txt";
     return {
       thought: `Reading file: ${filePath}`,
@@ -304,6 +343,8 @@ async function runAgentLoop(task, options = {}) {
     turns: 0,
     history: [],
     completed: false,
+    consecutiveErrors: 0,
+    maxConsecutiveErrors: 3,
   };
 
   log("═══════════════════════════════════════");
@@ -337,6 +378,20 @@ async function runAgentLoop(task, options = {}) {
     context.history = updated.history;
     context.turns = updated.turns;
     context.completed = updated.completed;
+
+    // Track consecutive errors
+    if (result.error) {
+      context.consecutiveErrors++;
+      log(`[OBSERVE] Consecutive errors: ${context.consecutiveErrors}/${context.maxConsecutiveErrors}`);
+      if (context.consecutiveErrors >= context.maxConsecutiveErrors) {
+        log("[LOOP] Too many consecutive errors, stopping");
+        context.completed = true;
+        context.finalAnswer = `Error after ${context.consecutiveErrors} attempts: ${result.error}`;
+        break;
+      }
+    } else {
+      context.consecutiveErrors = 0;
+    }
 
     if (context.completed) {
       context.finalAnswer = result.data;
