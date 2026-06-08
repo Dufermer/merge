@@ -100,6 +100,7 @@
 | **Paperclip** | Оркестратор AI-агентов (heartbeat, resultJson, адаптеры) |
 | **TaskPlanner** | Декомпозиция составных задач в DAG-граф подзадач |
 | **DAG Orchestrator** | Параллельное исполнение графа (concurrency ≤ 2) с retry на каждую ноду |
+| **Terminal Executor** | Безопасное выполнение shell-команд с whitelist, sandbox и snapshot/rollback |
 | **Puppeteer Stealth** | Обход антибот-защит при веб-поиске (Bing) |
 | **Wikipedia REST API** | Основной источник веб-данных (структурированные статьи) |
 | **SmolLM2 Critic** | Quality Gate — валидация результатов и запуск retry |
@@ -151,7 +152,7 @@ merge/
 │   ├── qwen2.5-coder-7b-instruct-q4_k_m.gguf  # Модель Компилятора (~4.7 GB)
 │   └── smollm2-3.6b-instruct-q4_k_m.gguf      # Модель Исполнителя/Критика (~2.5 GB)
 │
-├── docs/                              # 📚 Полная документация (13 файлов)
+├── docs/                              # 📚 Полная документация (14 файлов)
 │   ├── 00_OVERVIEW.md                 #   Общая карта системы
 │   ├── 01_llama_cpp_setup.md          #   Установка llama.cpp
 │   ├── 02_model_translator.md         #   Спецификация Переводчика
@@ -165,7 +166,8 @@ merge/
 │   ├── 10_paperclip_critic.md         #   Интеграция Критика (Closed-Loop Retry)
 │   ├── 11_task_decomposer.md          #   Декомпозиция задач в DAG
 │   ├── 12_dag_orchestrator.md         #   Графовая оркестрация
-│   └── 13_codebase_analyzer.md        #   AST-индекс и семантический поиск по коду
+│   ├── 13_codebase_analyzer.md        #   AST-индекс и семантический поиск по коду
+│   └── 14_terminal_executor.md       #   Безопасное выполнение shell-команд
 │
 ├── data/                              # 📁 Данные для инструментов
 │   └── pipeline_state.json            #   Состояние пайплайна (для Critic)
@@ -182,11 +184,13 @@ merge/
     ├── compiler/                      # 📦 Адаптер Компилятора (index.js + compiler.gbnf)
     │   └── index.js
     │   └── compiler.gbnf
-    ├── executor/                      # 📦 Адаптер Исполнителя (index.js + searchEngine.js + executor.gbnf + codebaseAnalyzer.js)
+    ├── executor/                      # 📦 Адаптер Исполнителя (index.js + searchEngine.js + executor.gbnf + codebaseAnalyzer.js + snapshots/)
     │   ├── index.js
     │   ├── searchEngine.js
     │   ├── codebaseAnalyzer.js
-    │   └── executor.gbnf
+    │   ├── executor.gbnf
+    │   ├── executor.log
+    │   └── snapshots/
     └── critic/                        # 📦 Адаптер Критика (index.js + critic.gbnf)
         ├── index.js
         └── critic.gbnf
@@ -212,6 +216,7 @@ merge/
 | [`11_task_decomposer.md`](docs/11_task_decomposer.md) | Декомпозиция составных задач, API taskPlanner.js, алгоритмы |
 | [`12_dag_orchestrator.md`](docs/12_dag_orchestrator.md) | Графовая оркестрация, топологическая сортировка, retry нод |
 | [`13_codebase_analyzer.md`](docs/13_codebase_analyzer.md) | AST-индекс, семантический поиск по коду, Babel-парсер |
+| [`14_terminal_executor.md`](docs/14_terminal_executor.md) | Безопасное выполнение shell-команд, whitelist, snapshot/rollback |
 
 ---
 

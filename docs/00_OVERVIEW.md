@@ -45,7 +45,7 @@ User Input (русский "грязный" текст)
 |-------|------|--------|------|--------|
 | translator | Парсинг русского текста в JSON-контракт | Saiga Llama3 8B (Q4_K_M) | 8081 | ✅ Готов |
 | compiler | Компиляция JSON-контракта в system tool-call | Qwen2.5-Coder-7B-Instruct | 8082 | ✅ Готов |
-| executor | Генерация mock/report, вызов ToolRegistry (read_file, web_search, codebase_search, list_files) | SmolLM2-3.6B-Instruct | 8083 | ✅ Готов |
+| executor | Генерация mock/report, вызов ToolRegistry (read_file, web_search, codebase_search, terminal_exec, list_files) | SmolLM2-3.6B-Instruct | 8083 | ✅ Готов |
 | critic | Quality Gate — валидация + closed-loop retry | SmolLM2-3.6B-Instruct | 8083* | ✅ Готов |
 
 ## Принципы
@@ -73,6 +73,7 @@ User Input (русский "грязный" текст)
 | `11_task_decomposer.md` | Task Planner — DAG-декомпозиция составных задач |
 | `12_dag_orchestrator.md` | DAG Orchestrator — графовое исполнение подзадач |
 | `13_codebase_analyzer.md` | Codebase Analyzer — AST-индекс и семантический поиск по коду |
+| `14_terminal_executor.md` | Terminal Executor — безопасное выполнение shell-команд |
 
 ## Требования к окружению
 - **OS:** Windows 10/11
@@ -122,6 +123,7 @@ Executor   → ⚠️ требует запуска :8083 (SmolLM2 не запу
 - ✅ **Task Planner: анализ сложности, DAG-декомпозиция составных задач (taskPlanner.js)**
 - ✅ **DAG Orchestrator: графовое исполнение подзадач с параллельностью и retry (dagOrchestrator.js)**
 - ✅ **Codebase Analyzer: AST-индекс + семантический поиск по коду (codebaseAnalyzer.js + codebase_search tool)**
+- ✅ **Safe terminal execution with automatic rollback (terminal_exec tool with whitelist, sandbox, snapshot/rollback)**
 
 ## Roadmap (следующие шаги)
 
