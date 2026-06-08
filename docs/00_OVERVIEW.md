@@ -1,4 +1,4 @@
-# Stateless MoE Conveyer — Обзор архитектуры
+# Self-Correcting DAG Agent — Обзор архитектуры (v2.0.0)
 
 ## Назначение
 
@@ -74,6 +74,28 @@ User Input (русский "грязный" текст)
 | `12_dag_orchestrator.md` | DAG Orchestrator — графовое исполнение подзадач |
 | `13_codebase_analyzer.md` | Codebase Analyzer — AST-индекс и семантический поиск по коду |
 | `14_terminal_executor.md` | Terminal Executor — безопасное выполнение shell-команд |
+
+## Установка
+
+Подробное руководство: [INSTALL.md](../INSTALL.md)
+
+**Быстрая установка:**
+
+```bash
+# Linux/macOS
+git clone https://github.com/Dufermer/merge.git
+cd merge
+chmod +x install.sh && ./install.sh
+```
+
+```powershell
+# Windows
+git clone https://github.com/Dufermer/merge.git
+cd merge
+.\install.ps1
+```
+
+---
 
 ## Требования к окружению
 - **OS:** Windows 10/11

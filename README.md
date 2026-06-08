@@ -122,39 +122,30 @@
 
 ---
 
-## ⚡ Быстрый старт
+## ⚡ Quick Start
 
-### Требования
+Подробное руководство: [INSTALL.md](INSTALL.md)
 
-- **OS:** Windows 10/11
-- **GPU:** NVIDIA (RTX 3070 и выше) с Vulkan-драйвером
-- **RAM:** ≥ 16 GB
-- **Диск:** ≥ 30 GB свободно (для 3 моделей GGUF ~12 GB)
-- **Утилиты:** Node.js 18+, Python 3.10+, Paperclip CLI (`npm install -g paperclipai`)
-
-### Установка
-
-```powershell
-# Автоматическая установка (рекомендуется)
-powershell -ExecutionPolicy Bypass -File install.ps1
-```
+### Linux / macOS
 
 ```bash
-# Или вручную:
-# 1. Клонировать репозиторий
 git clone https://github.com/Dufermer/merge.git
 cd merge
-
-# 2. Установить зависимости адаптеров
-cd ~/.paperclip/adapter-plugins/executor && npm install
-cd ~/.paperclip/adapter-plugins/critic && npm install
-
-# 3. Скачать GGUF-модели в llama_cpp/
-# (см. docs/02_model_translator.md, docs/04_model_compiler.md, docs/07_model_executor.md)
-
-# 4. Запустить всё одной командой
-powershell -ExecutionPolicy Bypass -File start_all.ps1
+chmod +x install.sh
+./install.sh
 ```
+
+### Windows
+
+```powershell
+git clone https://github.com/Dufermer/merge.git
+cd merge
+.\install.ps1
+```
+
+После установки система будет доступна на `http://127.0.0.1:3100`.
+
+Подробное руководство по установке: [INSTALL.md](INSTALL.md)
 
 ---
 
