@@ -1,14 +1,15 @@
-# 🧠 Autonomous Self-Correcting MoE Pipeline
+# 🧠 Self-Correcting DAG-Based Autonomous Agent
 
 ![llama.cpp](https://img.shields.io/badge/llama.cpp-b5563b?style=flat-square)
+[![llama.cpp](https://img.shields.io/badge/llama.cpp-host--memory%20prompt%20caching-blue)](https://github.com/ggml-org/llama.cpp/pull/16391)
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
-![Status](https://img.shields.io/badge/Status-Production--Ready-00ADD8?style=flat-square)
+![Status](https://img.shields.io/badge/Status-v1.1.0--DAG-00ADD8?style=flat-square)
 ![Paperclip](https://img.shields.io/badge/Paperclip-v2026.529-8A2BE2?style=flat-square)
 
-**Локальная, приватная, самоисправляющаяся система из 4 AI-агентов на базе llama.cpp и Paperclip.**
+**Локальная, приватная, самоисправляющаяся система из 4 AI-агентов с DAG-оркестрацией на базе llama.cpp и Paperclip.**
 
-Система работает на потребительском железе (RTX 3070, 8 GB VRAM) без платных API и облаков. Понимает русский язык, умеет искать в интернете через Wikipedia API, читать файлы с диска, выполнять задачи и самостоятельно исправлять свои ошибки через замкнутый цикл (Closed-Loop Retry).
+Система работает на потребительском железе (RTX 3070, 8 GB VRAM) без платных API и облаков. Понимает русский язык, умеет искать в интернете через Wikipedia API, читать файлы с диска, выполнять задачи и самостоятельно исправлять свои ошибки через замкнутый цикл (Closed-Loop Retry). Составные задачи автоматически декомпозируются в DAG-граф и исполняются параллельно.
 
 ---
 
@@ -17,6 +18,7 @@
 Мы построили **полностью автономный локальный конвейер AI-агентов**, который:
 
 - **Парсит «грязные» русские тексты** в структурированные JSON-контракты (Translator)
+- **Декомпозирует составные задачи** в DAG-граф с параллельными нодами (TaskPlanner)
 - **Компилирует JSON в system tool-calls** с GBNF-валидацией (Compiler)
 - **Выполняет реальные инструменты**: чтение файлов, веб-поиск через Wikipedia API, SQL-запросы (Executor)
 - **Проверяет качество результата** и при необходимости отправляет систему на переделку без участия человека (Critic)
@@ -29,43 +31,78 @@
 | 🛠 **Tool Registry** | Реальные инструменты (файловая система, веб-поиск), а не LLM-галлюцинации |
 | 🔄 **Self-Correction** | Quality Gate (Critic) проверяет результат и запускает retry при необходимости |
 | 🎯 **GBNF-грамматики** | 100% предсказуемый JSON-вывод от всех моделей |
-| ⚡ **Никаких затрат** | Бесплатно, без подписок, без API-ключей |
+| ⚡ **Host-memory prompt caching** | `-cram` — кэш системных промптов в RAM. 3 модели на 8 ГБ VRAM |
+| 🧩 **DAG-оркестрация** | Составные задачи → граф подзадач, параллельное исполнение (concurrency ≤ 2) |
 
 ---
 
 ## 🏗 Архитектура
 
 ```
- User Input (русский текст)
+[User Request]
        │
        ▼
-┌────────────────────────────────┐
-│  1. Translator  :8081          │ → JSON-контракт
-│  Saiga Llama3 8B               │    {intent, target, params}
-└────────────────────────────────┘
-       │
-       ▼
-┌────────────────────────────────┐
-│  2. Compiler   :8082           │ → System tool-call
-│  Qwen2.5-Coder-7B              │    {tool_name, system_command, strict_params}
-└────────────────────────────────┘
-       │
-       ▼
-┌────────────────────────────────┐
-│  3. Executor  :8083            │ → Tool result
-│  ToolRegistry + SmolLM2-3.6B   │    {data_source, status, logs}
-└────────────────────────────────┘
-       │
-       ▼
-┌────────────────────────────────┐     ─ ─ ─ retry (max 2) ─ ─ ─
-│  4. Critic (Quality Gate)      │ ←─────────────────────────────┐
-│  SmolLM2-3.6B                  │    reject + retry_instructions│
-│  approve / reject               │                              │
-└──────────┬─────────────────────┘                               │
-           │                                                     │
-           ▼                                                     │
-    ✅ Результат пользователю        Compiler ───────────────────┘
+[Translator :8081] ─── analyzeComplexity()
+       │                        │
+       │ Simple                 │ Complex (DAG)
+       ▼                        ▼
+┌──────────────────────┐  ┌──────────────────────┐
+│ Compiler :8082       │  │ DAG Orchestrator     │
+│ → Executor :8083     │  │   Node 1: [C→E→C]   │
+│   → Critic :8083     │  │   Node 2: [C→E→C] ◄─┤ parallel
+│     → approve/reject │  │   Node N: [C→E→C]   │
+└──────────┬───────────┘  └──────────┬───────────┘
+           │                         │
+           ▼                         ▼
+    ┌──────────────────────────────────────┐
+    │  Critic :8083 (Quality Gate)         │
+    │  approve → Result to User             │
+    │  reject  → Retry Loop (max 2)        │
+    └──────────────────────────────────────┘
 ```
+
+**Простой путь:** Translator → Compiler → Executor → Critic (линейный конвейер).
+**Сложный путь (DAG):** Translator → DAG Orchestrator → параллельные ноды [C→E→C] → общий Critic.
+
+---
+
+## ⚡ Оптимизации производительности
+
+Система использует **host-memory prompt caching** (llama.cpp PR [#16391](https://github.com/ggml-org/llama.cpp/pull/16391), флаг `-cram`).
+
+### Как это работает
+
+- **Системные промпты** и **GBNF-грамматики** кэшируются в обычной RAM как "extra slots"
+- При повторных stateless-вызовах промпт **не прогоняется через нейросеть заново**
+- Время до первого токена (TTFT) падает с секунд до **миллисекунд**
+- Освобождается **VRAM** для самих моделей (критично при 8 ГБ)
+
+### Почему это важно именно для нас
+
+| Проблема | Без `-cram` | С `-cram` |
+|----------|-------------|-----------|
+| 3 модели суммарно >10 ГБ на RTX 3070 8 ГБ | ❌ Не влезает | ✅ Работает |
+| Повторные вызовы одного эндпоинта | Каждый раз полный прогон | Кэш в RAM |
+| GBNF-грамматика 500+ токенов каждый запрос | Трата ресурсов на токенизацию | Закэширована |
+| DAG-оркестрация (N нод × 3 LLM-вызова) | Умножаем задержку | Кэш греет только первый вызов |
+
+> **Итог:** `-cram` — единственная причина, почему 3 модели (Saiga 8B + Qwen 7B + SmolLM2 3.6B) работают на одной видеокарте с 8 ГБ VRAM без свопинга.
+
+---
+
+## 🔬 Технологический стек
+
+| Компонент | Назначение |
+|-----------|------------|
+| **llama.cpp** (`-cram`) | Host-memory prompt caching — кэш системных промптов и GBNF в RAM |
+| **Vulkan backend** | Автоподхват NVIDIA GPU без установки CUDA Toolkit |
+| **GBNF-грамматики** | 100% structured output — JSON задаётся BNF-грамматикой, модель не может отклониться |
+| **Paperclip** | Оркестратор AI-агентов (heartbeat, resultJson, адаптеры) |
+| **TaskPlanner** | Декомпозиция составных задач в DAG-граф подзадач |
+| **DAG Orchestrator** | Параллельное исполнение графа (concurrency ≤ 2) с retry на каждую ноду |
+| **Puppeteer Stealth** | Обход антибот-защит при веб-поиске (Bing) |
+| **Wikipedia REST API** | Основной источник веб-данных (структурированные статьи) |
+| **SmolLM2 Critic** | Quality Gate — валидация результатов и запуск retry |
 
 ---
 
@@ -106,6 +143,7 @@ merge/
 ├── README.md                          # ← этот файл
 ├── start_all.ps1                      # Автоматический запуск всей инфраструктуры
 ├── stop_all.ps1                       # Остановка всей инфраструктуры
+├── dagOrchestrator.js                 # 📦 Графовый оркестратор нод
 │
 ├── llama_cpp/                         # 🏗 Инференс-сервер и GGUF-модели
 │   ├── llama-server.exe               #   Бинарный файл llama.cpp
@@ -113,7 +151,7 @@ merge/
 │   ├── qwen2.5-coder-7b-instruct-q4_k_m.gguf  # Модель Компилятора (~4.7 GB)
 │   └── smollm2-3.6b-instruct-q4_k_m.gguf      # Модель Исполнителя/Критика (~2.5 GB)
 │
-├── docs/                              # 📚 Полная документация (10 файлов)
+├── docs/                              # 📚 Полная документация (12 файлов)
 │   ├── 00_OVERVIEW.md                 #   Общая карта системы
 │   ├── 01_llama_cpp_setup.md          #   Установка llama.cpp
 │   ├── 02_model_translator.md         #   Спецификация Переводчика
@@ -124,7 +162,9 @@ merge/
 │   ├── 07_model_executor.md           #   Спецификация Исполнителя
 │   ├── 08_paperclip_executor.md       #   Интеграция Исполнителя (ToolRegistry + searchEngine)
 │   ├── 09_model_critic.md             #   Спецификация Критика
-│   └── 10_paperclip_critic.md         #   Интеграция Критика (Closed-Loop Retry)
+│   ├── 10_paperclip_critic.md         #   Интеграция Критика (Closed-Loop Retry)
+│   ├── 11_task_decomposer.md          #   Декомпозиция задач в DAG
+│   └── 12_dag_orchestrator.md         #   Графовая оркестрация
 │
 ├── data/                              # 📁 Данные для инструментов
 │   └── pipeline_state.json            #   Состояние пайплайна (для Critic)
@@ -133,9 +173,11 @@ merge/
 
 ~/.paperclip/
 ├── adapter-plugins.json               # Реестр адаптеров Paperclip
-└── adapter-plugins/
-    ├── translator/                    # 📦 Адаптер Переводчика (index.js + package.json)
-    │   └── index.js
+├── adapter-plugins/
+    ├── translator/                    # 📦 Адаптер Переводчика
+    │   ├── index.js                   #   Основной адаптер (DAG-интегрирован)
+    │   ├── taskPlanner.js             #   Декомпозитор задач
+    │   └── planner.gbnf               #   GBNF для валидации DAG
     ├── compiler/                      # 📦 Адаптер Компилятора (index.js + compiler.gbnf)
     │   └── index.js
     │   └── compiler.gbnf
@@ -165,19 +207,42 @@ merge/
 | [`08_paperclip_executor.md`](docs/08_paperclip_executor.md) | ToolRegistry, searchEngine.js, интеграция |
 | [`09_model_critic.md`](docs/09_model_critic.md) | Quality Gate Critic, Closed-Loop Retry Logic |
 | [`10_paperclip_critic.md`](docs/10_paperclip_critic.md) | Полный код, регистрация, pipeline diagram |
+| [`11_task_decomposer.md`](docs/11_task_decomposer.md) | Декомпозиция составных задач, API taskPlanner.js, алгоритмы |
+| [`12_dag_orchestrator.md`](docs/12_dag_orchestrator.md) | Графовая оркестрация, топологическая сортировка, retry нод |
 
 ---
 
-## 🧪 Результаты финального теста (v1.0.0)
+## 🧪 Результаты тестов
+
+### Простая задача (линейный конвейер)
 
 ```
 Issue: "прочитай файл server_config.json и скажи, какой там порт"
 
-Translator → Compiler → Executor (read_file → real data) → Critic
-                                                             │
-                                                     verdict: "approve"
-                                                     confidence: 0.95
-                                                     pipeline: "completed"
+Translator [analyzeComplexity → simple] → Compiler → Executor (read_file) → Critic
+                                                                         │
+                                                                 verdict: "approve"
+                                                                 confidence: 0.95
+                                                                 pipeline: "completed"
+```
+
+### Составная задача (DAG-оркестрация)
+
+```
+Issue: "прочитай файл server_config.json, найди там порт, сделай бэкап данных
+        и скажи, какой порт был в конфиге"
+
+Translator [analyzeComplexity → complex (4 steps)]
+
+DAG:
+  n1: read_file (server_config.json)             [independent]
+  n2: parse_port (из прочитанного файла)         [depends: n1]
+  n3: backup_data                                [depends: n1]
+  n4: report (какой порт был в конфиге)          [depends: n2, n3]
+
+Execution:
+  n1 ──► n2 ──┐
+       └─► n3 ──► n4 ──► Critic → approve
 ```
 
 ---
@@ -185,11 +250,11 @@ Translator → Compiler → Executor (read_file → real data) → Critic
 ## 📋 Метаданные репозитория
 
 **Description (для GitHub):**
-> Локальный самоисправляющийся MoE-конвейер из 4 AI-агентов на базе llama.cpp и Paperclip. Парсинг русского языка, агентский веб-поиск (Wikipedia API), выполнение задач и автоматический Quality Gate без использования облачных API.
+> Локальный самоисправляющийся DAG-конвейер из 4 AI-агентов на базе llama.cpp и Paperclip. Парсинг русского языка, декомпозиция задач в DAG, агентский веб-поиск (Wikipedia API), выполнение задач и автоматический Quality Gate без использования облачных API. Host-memory prompt caching (`-cram`) для работы 3 моделей на 8 ГБ VRAM.
 
 **Topics:**
 ```
-llama-cpp ai-agents moe paperclip local-llm gbnf autonomous-agents self-correcting russian-llm tool-calling rag
+llama-cpp ai-agents dag orchestration paperclip local-llm gbnf autonomous-agents self-correcting russian-llm tool-calling rag prompt-caching host-memory
 ```
 
 ---
