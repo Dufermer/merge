@@ -1,0 +1,42 @@
+# GBNF grammar for Logic Compiler (Agent #2)
+# Forces strict JSON output: system_command + tool_name + strict_params
+# Tool names match Agent #3 (Executor) capabilities
+
+root  ::= "{" ws 
+  "\"system_command\"" ws ":" ws string ","
+  ws "\"tool_name\"" ws ":" ws tool_enum ","
+  ws "\"strict_params\"" ws ":" ws object
+  ws "}"
+
+# Enum of available system tools for the Executor
+tool_enum ::= "\"update_schema\"" 
+  | "\"execute_sql\"" 
+  | "\"restart_service\"" 
+  | "\"deploy\""
+  | "\"configure\""
+  | "\"run_migration\""
+  | "\"backup\""
+  | "\"restore\""
+  | "\"scale\""
+  | "\"inspect\""
+  | "\"notify\""
+  | "\"rollback\""
+
+# JSON primitives
+string ::= "\"" ([^"]*) "\""
+boolean ::= "true" | "false"
+number ::= "-"? (("0" | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [+-]? [0-9]+)?
+null   ::= "null"
+
+# Generic JSON value hierarchy
+value ::= object | array | string | number | boolean | null
+
+# Object: key-value pairs, empty object allowed
+object ::= "{" ws (pair ("," ws pair)*)? ws "}"
+pair  ::= string ws ":" ws value
+
+# Array: ordered values, empty array allowed
+array ::= "[" ws (value ("," ws value)*)? ws "]"
+
+# Whitespace
+ws ::= ([ \t\n\r])*

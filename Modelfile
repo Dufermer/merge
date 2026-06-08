@@ -1,0 +1,2 @@
+FROM C:\Users\rus\Desktop\merge\saiga_llama3_8b-q4_k_m.gguf
+TEMPLATE "{{ .Prompt }}"

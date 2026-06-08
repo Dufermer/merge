@@ -1,0 +1,37 @@
+# Ignore GGUF model files (too large for Git)
+*.gguf
+
+# Binary files in llama_cpp
+*.dll
+*.exe
+*.zip
+
+# Node.js dependencies
+node_modules/
+package-lock.json
+
+# Pipeline state (auto-generated per run)
+pipeline_state.json
+
+# Logs
+logs/
+*.log
+*.ndjson
+
+# OS junk
+Thumbs.db
+.DS_Store
+*.swp
+*.swo
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Test files and debug artifacts
+data/test_tools.js
+data/test_web_search.js
+test_*.js
+debug_*.js
+translator_debug.json
