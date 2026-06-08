@@ -1,0 +1,9 @@
+{
+  "id": "system-info",
+  "name": "system-info",
+  "pattern": "\u043a\u0430\u043a\u043e\u0439 \u0443 \u043c\u0435\u043d\u044f hostname",
+  "steps": [],
+  "toolsUsed": [],
+  "successRate": 1.0,
+  "usageCount": 0
+}

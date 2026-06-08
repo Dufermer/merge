@@ -1,0 +1,9 @@
+{
+  "id": "config-port-read",
+  "name": "config-port-read",
+  "pattern": "\u043f\u0440\u043e\u0447\u0438\u0442\u0430\u0439 \u0444\u0430\u0439\u043b config \u043d\u0430\u0439\u0442\u0438 \u043f\u043e\u0440\u0442 \u0443\u043c\u043d\u043e\u0436\u0438\u0442\u044c \u043d\u0430 number",
+  "steps": [],
+  "toolsUsed": [],
+  "successRate": 1.0,
+  "usageCount": 0
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "config-port-read",
+    "pattern": "прочитай файл config найти порт умножить на number",
+    "content": "read_config_find_port"
+  },
+  {
+    "name": "math-calculate",
+    "pattern": "сколько будет expression",
+    "content": "simple_math"
+  },
+  {
+    "name": "file-read-basic",
+    "pattern": "прочитай файл FILE",
+    "content": "read_file"
+  },
+  {
+    "name": "system-info",
+    "pattern": "какой у меня hostname",
+    "content": "get_hostname"
+  }
+]

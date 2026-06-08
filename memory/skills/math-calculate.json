@@ -1,0 +1,9 @@
+{
+  "id": "math-calculate",
+  "name": "math-calculate",
+  "pattern": "\u0441\u043a\u043e\u043b\u044c\u043a\u043e \u0431\u0443\u0434\u0435\u0442 expression",
+  "steps": [],
+  "toolsUsed": [],
+  "successRate": 1.0,
+  "usageCount": 0
+}
