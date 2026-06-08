@@ -113,6 +113,7 @@
 | **Vulkan backend** | Автоподхват NVIDIA GPU без установки CUDA Toolkit |
 | **GBNF-грамматики** | 100% structured output — JSON задаётся BNF-грамматикой, модель не может отклониться |
 | **Paperclip** | Оркестратор AI-агентов (heartbeat, resultJson, адаптеры) |
+| **Self-Learning Skills** | Автосоздание рецептов из успешных DAG, семантический поиск (ChromaDB), эволюция до canon |
 | **CEO Agent** | Диспетчер с гибридной памятью (keyword + vector semantic search), conversation history |
 | **DAG Orchestrator** | Параллельное исполнение графа (concurrency ≤ 2) с retry на каждую ноду |
 | **Database Executor** | Безопасные SQL-запросы (SQLite/Postgres), авто-бэкап, блокировка DROP/DELETE без WHERE |
@@ -162,9 +163,7 @@ merge/
 ├── dagOrchestrator.js                 # 📦 Графовый оркестратор нод
 ├── ceoAgent.js                        # 🧠 CEO диспетчер с памятью
 ├── ceoDecision.gbnf                   # 📜 GBNF для решений CEO
-├── skillManager.js                    # 🎯 Менеджер навыков (skills)
-├── skillCreator.js                    # 🎯 Создатель навыков из DAG
-│
+├── skills/                            # 🎯 Хранилище навыков (skills)
 ├── llama_cpp/                         # 🏗 Инференс-сервер и GGUF-модели
 │   ├── llama-server.exe               #   Бинарный файл llama.cpp
 │   ├── saiga_llama3_8b-q4_k_m.gguf    #   Модель Переводчика (~4.9 GB)
@@ -212,7 +211,7 @@ merge/
     ├── compiler/                      # 📦 Адаптер Компилятора (index.js + compiler.gbnf)
     │   └── index.js
     │   └── compiler.gbnf
-    ├── executor/                      # 📦 Адаптер Исполнителя (index.js + searchEngine.js + executor.gbnf + codebaseAnalyzer.js + codePatcher.js + databaseExecutor.js + memoryManager.js + snapshots/)
+    ├── executor/                      # 📦 Адаптер Исполнителя (index.js + searchEngine.js + executor.gbnf + codebaseAnalyzer.js + codePatcher.js + databaseExecutor.js + memoryManager.js + skillManager.js + skillCreator.js + snapshots/)
     │   ├── index.js
     │   ├── searchEngine.js
     │   ├── codebaseAnalyzer.js
@@ -220,6 +219,8 @@ merge/
     │   ├── codePatch.gbnf
     │   ├── databaseExecutor.js
     │   ├── memoryManager.js
+    │   ├── skillManager.js
+    │   ├── skillCreator.js
     │   ├── executor.gbnf
     │   ├── executor.log
     │   └── snapshots/
