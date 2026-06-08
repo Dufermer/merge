@@ -2,26 +2,6 @@
   "messages": [
     {
       "role": "user",
-      "content": "naidi auth v kode",
-      "timestamp": "2026-06-08T04:30:17.886Z"
-    },
-    {
-      "role": "ceo",
-      "content": "Обработано: naidi auth v kode",
-      "timestamp": "2026-06-08T04:30:17.886Z"
-    },
-    {
-      "role": "user",
-      "content": "naidi auth v kode",
-      "timestamp": "2026-06-08T04:30:17.887Z"
-    },
-    {
-      "role": "ceo",
-      "content": "Обработано: naidi auth v kode",
-      "timestamp": "2026-06-08T04:30:17.888Z"
-    },
-    {
-      "role": "user",
       "content": "prochitai config.yaml, naidi tam port, sdelai backup",
       "timestamp": "2026-06-08T04:33:42.617Z"
     },
@@ -49,6 +29,26 @@
       "role": "ceo",
       "content": "handleLogin in src/auth.js:45",
       "timestamp": "2026-06-08T04:38:14.507Z"
+    },
+    {
+      "role": "user",
+      "content": "naidi avtorizatsiyu v kode",
+      "timestamp": "2026-06-08T04:48:00.133Z"
+    },
+    {
+      "role": "ceo",
+      "content": "handleLogin in src/auth.js:45",
+      "timestamp": "2026-06-08T04:48:00.133Z"
+    },
+    {
+      "role": "user",
+      "content": "naidi avtorizatsiyu v kode",
+      "timestamp": "2026-06-08T04:48:00.140Z"
+    },
+    {
+      "role": "ceo",
+      "content": "handleLogin in src/auth.js:45",
+      "timestamp": "2026-06-08T04:48:00.141Z"
     }
   ]
 }

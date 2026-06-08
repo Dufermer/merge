@@ -114,7 +114,7 @@
 | **GBNF-грамматики** | 100% structured output — JSON задаётся BNF-грамматикой, модель не может отклониться |
 | **Paperclip** | Оркестратор AI-агентов (heartbeat, resultJson, адаптеры) |
 | **Self-Learning Skills** | Автосоздание рецептов из успешных DAG, семантический поиск (ChromaDB), эволюция до canon |
-| **CEO Agent** | Диспетчер с гибридной памятью (keyword + vector semantic search), conversation history |
+| **CEO Agent** | Диспетчер с гибридной памятью (keyword + cosine similarity), Node.js vector store, 50+ синонимов |
 | **DAG Orchestrator** | Параллельное исполнение графа (concurrency ≤ 2) с retry на каждую ноду |
 | **Database Executor** | Безопасные SQL-запросы (SQLite/Postgres), авто-бэкап, блокировка DROP/DELETE без WHERE |
 | **Codebase Analyzer** | AST-индекс и семантический поиск по коду |
