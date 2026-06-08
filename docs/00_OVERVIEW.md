@@ -81,6 +81,8 @@ User Input (русский "грязный" текст)
 | `18_self_learning_skills.md` | Self-Learning Skills — автосоздание шаблонов из успешных задач |
 | `19_git_first.md` | Git-First — автоматические коммиты после изменений |
 | `20_error_recovery.md` | Error Recovery — обучение на ошибках, паттерны восстановления |
+| `21_multi_strategy.md` | Multi-Strategy — генерация и оценка нескольких планов |
+| `22_project_context.md` | Project Context — автообновляемый контекст проекта |
 
 ## Установка
 
@@ -159,6 +161,8 @@ Executor   → ⚠️ требует запуска :8083 (SmolLM2 не запу
 - ✅ **Self-Learning Skills: автосоздание шаблонов из успешных задач, эволюция до canon (skillManager.js + skillCreator.js)**
 - ✅ **Git-First: автоматические git-коммиты после каждого успешного изменения кода (gitFirst.js)**
 - ✅ **Error Recovery: система учится на ошибках, применяет проверенные паттерны восстановления (errorRecovery.js)**
+- ✅ **Multi-Strategy: генерация 2-3 планов, оценка по риску/сложности, автопереключение при провале (multiStrategy.js)**
+- ✅ **Project Context: автообновляемый файл с контекстом проекта, CEO читает при старте (projectContext.js + PROJECT_CONTEXT.md)**
 
 ## Roadmap (следующие шаги)
 

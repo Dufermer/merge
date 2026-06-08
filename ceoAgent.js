@@ -15,6 +15,8 @@ const MEMORY_MANAGER_PATH = path.join(EXECUTOR_DIR, "memoryManager.js");
 const SKILL_MANAGER_PATH = path.join(EXECUTOR_DIR, "skillManager.js");
 const SKILL_CREATOR_PATH = path.join(EXECUTOR_DIR, "skillCreator.js");
 const ERROR_RECOVERY_PATH = path.join(EXECUTOR_DIR, "skills/errorRecovery.js");
+const PROJECT_CONTEXT_PATH = path.join(EXECUTOR_DIR, "skills/projectContext.js");
+const MULTI_STRATEGY_PATH = path.join(EXECUTOR_DIR, "skills/multiStrategy.js");
 
 async function processUserRequest(userInput) {
   const startTime = Date.now();
@@ -29,6 +31,20 @@ async function processUserRequest(userInput) {
   const memoryManager = require(MEMORY_MANAGER_PATH);
   const skillManager = require(SKILL_MANAGER_PATH);
   const skillCreator = require(SKILL_CREATOR_PATH);
+
+  // ═══ ФАЗА 0: Project Context ═══
+  let projectContext = null;
+  try {
+    const ProjectContext = require(PROJECT_CONTEXT_PATH);
+    const pc = new ProjectContext();
+    const ctx = await pc.getRelevantContext(userInput);
+    projectContext = ctx.context;
+    if (ctx.sections !== "all") {
+      log(`[CEO] Project context loaded: section=${ctx.sections}`);
+    }
+  } catch (e) {
+    log(`[CEO] Project context error: ${e.message}`);
+  }
 
   // ═══ ФАЗА 0: Поиск навыка (ChromaDB skills) ═══
   log("[CEO] Phase 0: Searching skills...");
@@ -116,8 +132,24 @@ async function processUserRequest(userInput) {
       log("[CEO] Delegating...");
       let context = { timeout: 30000 };
 
+      // Multi-Strategy Planning for complex tasks
+      let dagNodes = [{ id: "n1", action: "process", params: { input: userInput } }];
       try {
-        const dagNodes = [{ id: "n1", action: "process", params: { input: userInput } }];
+        const MultiStrategy = require(MULTI_STRATEGY_PATH);
+        const ms = new MultiStrategy();
+        const strategies = await ms.generateStrategies(userInput, 3);
+        const evaluated = await ms.evaluateStrategies(strategies);
+        const best = await ms.selectBestStrategy(evaluated);
+
+        if (best && best.dag && best.dag.nodes) {
+          log(`[CEO] ${best._selectionLog || `Selected ${best.id}`}`);
+          dagNodes = best.dag.nodes;
+        }
+      } catch (e) {
+        log(`[CEO] Multi-strategy error, using default: ${e.message}`);
+      }
+
+      try {
         const dagOrch = require("C:\\Users\\rus\\Desktop\\merge\\dagOrchestrator.js");
         const dagResult = await dagOrch.orchestrateDag({ nodes: dagNodes }, null, null);
 
@@ -180,6 +212,20 @@ async function processUserRequest(userInput) {
   });
   memoryManager.addToConversation("user", userInput);
   memoryManager.addToConversation("ceo", finalAnswer);
+
+  // Auto-update Project Context after important tasks
+  try {
+    const q = userInput.toLowerCase();
+    if (q.includes("model") || q.includes("файл") || q.includes("file") ||
+        q.includes("structure") || q.includes("структур") || fromMemory === false) {
+      const ProjectContext = require(PROJECT_CONTEXT_PATH);
+      const pc = new ProjectContext();
+      await pc.autoUpdate(userInput, { answer: finalAnswer });
+      log("[CEO] Project context auto-updated");
+    }
+  } catch (e) {
+    log(`[CEO] Project context update error: ${e.message}`);
+  }
 
   const elapsed = Date.now() - startTime;
   log(`[CEO] Completed in ${elapsed}ms (skill: ${!!usedSkill}, memory: ${fromMemory})`);

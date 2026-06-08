@@ -163,6 +163,8 @@ merge/
 ├── dagOrchestrator.js                 # 📦 Графовый оркестратор нод
 ├── ceoAgent.js                        # 🧠 CEO диспетчер с памятью
 ├── ceoDecision.gbnf                   # 📜 GBNF для решений CEO
+├── multiStrategy.gbnf                 # 📜 GBNF для мульти-стратегий
+├── PROJECT_CONTEXT.md                # 📋 Автообновляемый контекст проекта
 ├── skills/                            # 🎯 Хранилище навыков (skills)
 ├── llama_cpp/                         # 🏗 Инференс-сервер и GGUF-модели
 │   ├── llama-server.exe               #   Бинарный файл llama.cpp
@@ -170,7 +172,7 @@ merge/
 │   ├── qwen2.5-coder-7b-instruct-q4_k_m.gguf  # Модель Компилятора (~4.7 GB)
 │   └── smollm2-3.6b-instruct-q4_k_m.gguf      # Модель Исполнителя/Критика (~2.5 GB)
 │
-├── docs/                              # 📚 Полная документация (20 файлов)
+├── docs/                              # 📚 Полная документация (22 файла)
 │   ├── 00_OVERVIEW.md                 #   Общая карта системы
 │   ├── 01_llama_cpp_setup.md          #   Установка llama.cpp
 │   ├── 02_model_translator.md         #   Спецификация Переводчика
@@ -191,7 +193,9 @@ merge/
 │   ├── 17_ceo_agent.md             #   CEO диспетчер с памятью
 │   ├── 18_self_learning_skills.md  #   Автосоздание шаблонов
 │   ├── 19_git_first.md            #   Автоматические коммиты
-│   └── 20_error_recovery.md       #   Обучение на ошибках
+│   ├── 20_error_recovery.md       #   Обучение на ошибках
+│   ├── 21_multi_strategy.md       #   Мульти-стратегии
+│   └── 22_project_context.md      #   Контекст проекта
 │
 ├── data/                              # 📁 Данные для инструментов
 │   ├── pipeline_state.json            #   Состояние пайплайна (для Critic)
@@ -235,7 +239,9 @@ merge/
     │   ├── skillCreator.js
     │   ├── skills/
     │   │   ├── gitFirst.js
-    │   │   └── errorRecovery.js
+    │   │   ├── errorRecovery.js
+    │   │   ├── multiStrategy.js
+    │   │   └── projectContext.js
     │   ├── executor.gbnf
     │   ├── executor.log
     │   └── snapshots/
@@ -274,6 +280,8 @@ merge/
 | [`18_self_learning_skills.md`](docs/18_self_learning_skills.md) | Self-Learning Skills, эволюция от new до canon |
 | [`19_git_first.md`](docs/19_git_first.md) | Git-First, автоматические коммиты после изменений кода |
 | [`20_error_recovery.md`](docs/20_error_recovery.md) | Error Recovery, обучение на ошибках, паттерны восстановления |
+| [`21_multi_strategy.md`](docs/21_multi_strategy.md) | Multi-Strategy, генерация и оценка нескольких планов |
+| [`22_project_context.md`](docs/22_project_context.md) | Project Context, автообновляемый контекст проекта |
 
 ---
 

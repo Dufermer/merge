@@ -1,0 +1,36 @@
+# GBNF grammar for Multi-Strategy Planning
+# Forces JSON array of strategy objects
+
+root ::= "[" ws strategy ("," ws strategy)* ws "]"
+
+strategy ::= "{" ws
+  "\"id\"" ws ":" ws string ","
+  ws "\"name\"" ws ":" ws string ","
+  ws "\"description\"" ws ":" ws string ","
+  ws "\"risk_level\"" ws ":" ws risk_enum ","
+  ws "\"complexity\"" ws ":" ws number ","
+  ws "\"estimated_success_rate\"" ws ":" ws number ","
+  ws "\"dag\"" ws ":" ws dag_object
+  ws "}"
+
+risk_enum ::= "\"low\"" | "\"medium\"" | "\"high\""
+
+dag_object ::= "{" ws
+  "\"nodes\"" ws ":" ws "[" ws dag_node ("," ws dag_node)* ws "]"
+  ws "}"
+
+dag_node ::= "{" ws
+  "\"id\"" ws ":" ws string ","
+  ws "\"action\"" ws ":" ws string ","
+  ws "\"params\"" ws ":" ws object
+  ws "}"
+
+string ::= "\"" ([^"]*) "\""
+number ::= "-"? (("0" | [1-9] [0-9]*)) ("." [0-9]+)?
+object ::= "{" ws (pair ("," ws pair)*)? ws "}"
+pair  ::= string ws ":" ws value
+value ::= object | array | string | number | boolean | null
+array ::= "[" ws (value ("," ws value)*)? ws "]"
+boolean ::= "true" | "false"
+null   ::= "null"
+ws ::= ([ \t\n\r])*
