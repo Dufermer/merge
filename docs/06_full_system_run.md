@@ -517,6 +517,43 @@ Executor  (19faa25d) ⚠️ → llama-server on :8083 not running
 3. Создать задачу → translator → обновить description → compiler → обновить description → executor
 4. Ожидаемый финальный JSON: `{"status":"mocked","tool_executed":"backup","execution_time_ms":<int>,"logs":[...],"final_state":{...}}`
 
+---
+
+### DAG-оркестрация: составная задача
+
+Для задач с несколькими действиями Translator вызывает `taskPlanner.js`, который строит граф подзадач (DAG).
+
+**Пример:** *"прочитай файл server_config.json, найди там порт, сделай бэкап данных и скажи, какой порт был в конфиге"*
+
+```
+Translator:
+  analyzeComplexity → {isComplex: true, estimatedSteps: 4}
+  decomposeTask → DAG:
+    n1: read_file("server_config.json")     [independent]
+    n2: parse_port(n1.result)                [depends: n1]
+    n3: backup_data(n1.result)               [depends: n1]
+    n4: report(n2.result)                    [depends: n2, n3]
+
+DAG Orchestrator:
+  ┌─────────────────┐
+  │ topologicalSort │ → [n1] → [n2, n3] → [n4]
+  └─────────────────┘
+
+  Level 0: n1 ──→ Compiler → Executor → Critic → ✅
+  Level 1: n2 ──→ Compiler → Executor → Critic → ✅   (parallel)
+           n3 ──→ Compiler → Executor → Critic → ✅   (parallel)
+  Level 2: n4 ──→ Compiler → Executor → Critic → ✅
+
+  Final Critic: approve → aggregated result to user
+```
+
+**Файлы:**
+- `taskPlanner.js` → `~/.paperclip/adapter-plugins/translator/`
+- `dagOrchestrator.js` → корень репозитория
+- `planner.gbnf` → валидация DAG через SmolLM2
+
+**Compatibility:** Старые простые запросы работают как раньше (линейный конвейер). DAG включается только для составных задач.
+
 ### Известные ограничения
 
 1. **Русский текст в Translator:** При использовании кириллицы через curl возможны

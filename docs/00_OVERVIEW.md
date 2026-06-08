@@ -69,7 +69,9 @@ User Input (русский "грязный" текст)
 | `07_model_executor.md` | Спецификация модели Исполнителя |
 | `08_paperclip_executor.md` | Интеграция Исполнителя в Paperclip |
 | `09_model_critic.md` | Спецификация модели Критика |
-| `10_paperclip_critic.md` | Интеграция Критика в Paperclip |
+| `10_paperclip_critic.md` | Интеграция Критика (Closed-Loop Retry) |
+| `11_task_decomposer.md` | Task Planner — DAG-декомпозиция составных задач |
+| `12_dag_orchestrator.md` | DAG Orchestrator — графовое исполнение подзадач |
 
 ## Требования к окружению
 - **OS:** Windows 10/11
@@ -80,7 +82,7 @@ User Input (русский "грязный" текст)
 
 ---
 
-## ✅ ИТОГ: 🧠 Self-Correcting Autonomous Agent
+## ✅ ИТОГ: 🧠 Self-Correcting DAG-Based Autonomous Agent
 
 Базовый MoE-конвейер из 3 stateless-агентов работает стабильно:
 
@@ -116,6 +118,8 @@ Executor   → ⚠️ требует запуска :8083 (SmolLM2 не запу
 - ✅ Pipeline: ручная передача контекста через `description` задачи + `pipeline_state.json`
 - ✅ Scripts: `start_all.ps1` / `stop_all.ps1` с поддержкой 3 серверов
 - ✅ **Self-Correction: при reject Критика → автоматический retry Компилятора + Исполнителя**
+- ✅ **Task Planner: анализ сложности, DAG-декомпозиция составных задач (taskPlanner.js)**
+- ✅ **DAG Orchestrator: графовое исполнение подзадач с параллельностью и retry (dagOrchestrator.js)**
 
 ## Roadmap (следующие шаги)
 
