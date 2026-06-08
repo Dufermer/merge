@@ -118,32 +118,70 @@ const TOOL_REGISTRY = {
     description: "Fetch and analyze a web page or GitHub repository. Params: { url: string }",
     execute: async (params) => {
       try {
-        const url = params.url || "";
+        let url = (params.url || "").trim();
         if (!url) return { error: "No URL provided" };
+
+        // Clean URL from markdown link syntax [text](url) or <url>
+        url = url.replace(/^.*?\(/, "").replace(/\).*$/, "").replace(/^</, "").replace(/>$/, "");
+
         try { new URL(url); } catch { return { error: `Invalid URL: ${url}` }; }
 
-        const { execSync } = require("node:child_process");
+        // Use Node.js https module, not shell curl
+        const result = await new Promise((resolve) => {
+          const u = new URL(url);
+          const mod = u.protocol === "https:" ? require("node:https") : require("node:http");
 
-        // For GitHub repos, use API for README
-        if (url.includes("github.com")) {
-          const repoMatch = url.match(/github\.com\/([^\/]+)\/([^\/\?#]+)/);
-          if (repoMatch) {
-            const apiUrl = `https://api.github.com/repos/${repoMatch[1]}/${repoMatch[2]}/readme`;
-            const out = execSync(`curl -sL -H "Accept: application/vnd.github.v3+json" "${apiUrl}"`, { timeout: 15000 });
-            const data = JSON.parse(out.toString());
-            if (data.content) {
-              const content = Buffer.from(data.content, "base64").toString("utf8");
-              const trimmed = content.length > 10000 ? content.slice(0, 10000) + "\n\n[...truncated...]" : content;
-              return { data: trimmed, format: "text", source: "github_api", url };
+          // For GitHub, use API for README
+          const isGitHub = url.includes("github.com");
+          let reqUrl = url;
+          let requestHost = u.hostname;
+          let requestPort = u.port || (u.protocol === "https:" ? 443 : 80);
+          let requestPath = u.pathname + u.search;
+
+          if (isGitHub) {
+            const repoMatch = url.match(/github\.com\/([^\/]+)\/([^\/\?#]+)/);
+            if (repoMatch) {
+              const apiUrl = new URL(`https://api.github.com/repos/${repoMatch[1]}/${repoMatch[2]}/readme`);
+              reqUrl = apiUrl.href;
+              requestHost = apiUrl.hostname;
+              requestPort = "443";
+              requestPath = apiUrl.pathname;
             }
           }
-        }
 
-        // Generic web fetch via curl
-        const out = execSync(`curl -sL --max-time 20 "${url}"`, { timeout: 30000, maxBuffer: 10 * 1024 * 1024 });
-        const text = out.toString();
-        const trimmed = text.length > 10000 ? text.slice(0, 10000) + "\n\n[...truncated...]" : text;
-        return { data: trimmed, format: "text", source: "curl", url, fullLength: text.length };
+          const reqOptions = {
+            hostname: requestHost,
+            port: requestPort,
+            path: requestPath,
+            headers: { "User-Agent": "Hermes-Agent/1.0" }
+          };
+          if (isGitHub) reqOptions.headers["Accept"] = "application/vnd.github.v3+json";
+          const req = mod.get(reqOptions, (res) => {
+            let data = "";
+            res.on("data", (chunk) => { data += chunk.toString(); });
+            res.on("end", () => {
+              if (isGitHub) {
+                try {
+                  const d = JSON.parse(data);
+                  if (d.content) {
+                    const content = Buffer.from(d.content, "base64").toString("utf8");
+                    const trimmed = content.length > 10000 ? content.slice(0, 10000) + "\n\n[...truncated...]" : content;
+                    return resolve({ data: trimmed, format: "text", source: "github_api", url });
+                  }
+                  return resolve({ error: `GitHub API: ${d.message || "unknown"}` });
+                } catch { return resolve({ error: `GitHub API parse error: ${data.slice(0, 200)}` }); }
+              }
+              const text = data;
+              const trimmed = text.length > 10000 ? text.slice(0, 10000) + "\n\n[...truncated...]" : text;
+              return resolve({ data: trimmed, format: "text", source: "http", url, fullLength: text.length });
+            });
+          });
+          req.on("error", (e) => resolve({ error: `Request failed: ${e.message}` }));
+          req.setTimeout(15000, () => { req.destroy(); resolve({ error: "Timeout (15s)" }); });
+          req.end();
+        });
+
+        return result;
       } catch (e) {
         return { error: `Web fetch error: ${e.message}` };
       }
@@ -366,22 +404,31 @@ function buildFallbackDecision(task, context) {
     return { thought: "Task completed based on previous result", tool: null, params: {}, done: true };
   }
 
-  // URL detection — must be checked FIRST
-  const urlMatch = task.match(/https?:\/\/[^\s]+/);
+  // URL detection — must be checked FIRST (strip markdown link syntax)
+  const urlMatch = task.match(/https?:\/\/[^\s\)\]\<\>]+/);
   if (urlMatch) {
-    const url = urlMatch[0];
+    let url = urlMatch[0];
+    // Clean any remaining markdown syntax
+    url = url.replace(/[\)\]\<\>]+$/, "").replace(/^[\(\[\<\>]+/, "");
     return { thought: `Fetching URL: ${url}`, tool: "web_fetch", params: { url }, done: false };
   }
 
-  // Math detection
-  const mathExpr = taskLower.match(/(\d+\s*[\+\-\*\/\(\)]\s*\d+[\s\d]*[\+\-\*\/\(\)\s\d]*)/);
+  // Math detection — only simple arithmetic, NOT dates
+  const mathExpr = taskLower.match(/(\d{1,4}\s*[\+\-\*\/]\s*\d{1,4}(?:\s*[\+\-\*\/]\s*\d{1,4})?)/);
   if (mathExpr) {
-    return {
-      thought: `Computing: ${mathExpr[1]}`,
-      tool: "calculate",
-      params: { expression: mathExpr[1].replace(/\s/g, "") },
-      done: false,
-    };
+    const expr = mathExpr[1].replace(/\s/g, "");
+    // Check this isn't a date (YYYY-MM-DD or similar)
+    if (expr.match(/^\d{3,4}[\-\/]\d{1,2}[\-\/]\d{1,2}$/)) {
+      // This looks like a date, not math — skip
+      log(`[THINK] Skipping math regex — looks like a date: ${expr}`);
+    } else {
+      return {
+        thought: `Computing: ${expr}`,
+        tool: "calculate",
+        params: { expression: expr },
+        done: false,
+      };
+    }
   }
 
   // File read detection — requires action verb, not just "файл"
