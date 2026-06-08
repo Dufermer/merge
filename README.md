@@ -4,12 +4,27 @@
 [![llama.cpp](https://img.shields.io/badge/llama.cpp-host--memory%20prompt%20caching-blue)](https://github.com/ggml-org/llama.cpp/pull/16391)
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
-![Status](https://img.shields.io/badge/Status-v1.1.0--DAG-00ADD8?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Production--Ready-00ADD8?style=flat-square)
 ![Paperclip](https://img.shields.io/badge/Paperclip-v2026.529-8A2BE2?style=flat-square)
 
 **Локальная, приватная, самоисправляющаяся система из 4 AI-агентов с DAG-оркестрацией на базе llama.cpp и Paperclip.**
 
 Система работает на потребительском железе (RTX 3070, 8 GB VRAM) без платных API и облаков. Понимает русский язык, умеет искать в интернете через Wikipedia API, читать файлы с диска, выполнять задачи и самостоятельно исправлять свои ошибки через замкнутый цикл (Closed-Loop Retry). Составные задачи автоматически декомпозируются в DAG-граф и исполняются параллельно.
+
+---
+
+## 🎉 What's New in v2.0.0
+
+| Фича | Описание |
+|------|----------|
+| **🧩 DAG-оркестрация** | Составные задачи → автоматическая декомпозиция в граф подзадач с параллельным исполнением (concurrency ≤ 2) и retry на каждую ноду |
+| **🔬 Codebase Analyzer** | AST-индекс проекта (Babel для JS/TS, regex для Python/Go/Rust/Java). Семантический поиск функций, классов, сигнатур через `codebase_search` tool |
+| **🛡 Terminal Executor** | Безопасное выполнение shell-команд с 3-уровневой защитой: whitelist (40+ команд), validatePath, snapshot/rollback для отката изменений |
+| **⚡ Host-memory prompt caching** | `-cram` — системные промпты и GBNF кэшируются в RAM. 3 модели на 8 ГБ VRAM без свопинга |
+| **📚 14 файлов документации** | От `00_OVERVIEW.md` до `14_terminal_executor.md` — полное покрытие всех модулей и сценариев |
+
+[Полный список изменений →](CHANGELOG.md)
 
 ---
 
@@ -119,9 +134,15 @@
 
 ### Установка
 
+```powershell
+# Автоматическая установка (рекомендуется)
+powershell -ExecutionPolicy Bypass -File install.ps1
+```
+
 ```bash
+# Или вручную:
 # 1. Клонировать репозиторий
-git clone ...
+git clone https://github.com/Dufermer/merge.git
 cd merge
 
 # 2. Установить зависимости адаптеров
