@@ -109,6 +109,12 @@ function httpReq(url, method = "GET", body = null) {
 function shouldDelegate(task) {
   const t = task.toLowerCase();
 
+  // URL detection — never delegate, execute via web_fetch
+  if (/https?:\/\/[^\s]+/.test(task) || task.includes("github.com") || /\b[a-z0-9-]+\.[a-z]{2,}\b/i.test(task)) {
+    log(`[CEOv2] shouldDelegate: NO (URL detected — use web_fetch)`);
+    return false;
+  }
+
   // Simple math — always handle directly (faster)
   if (t.match(/сколько\s+будет|^\d+\s*[\+\-\*\/]/)) return false;
 
