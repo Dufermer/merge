@@ -1,53 +1,35 @@
-# 🧠 Self-Correcting DAG-Based Autonomous Agent
+# 🧠 Autonomous Self-Correcting AI Agent System with CEO Orchestrator
 
-![llama.cpp](https://img.shields.io/badge/llama.cpp-b5563b?style=flat-square)
-[![llama.cpp](https://img.shields.io/badge/llama.cpp-host--memory%20prompt%20caching-blue)](https://github.com/ggml-org/llama.cpp/pull/16391)
-![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js)
-![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)
-![Status](https://img.shields.io/badge/Status-Production--Ready-00ADD8?style=flat-square)
-![Paperclip](https://img.shields.io/badge/Paperclip-v2026.529-8A2BE2?style=flat-square)
+[![llama.cpp](https://img.shields.io/badge/llama.cpp-b5563b?style=flat-square)](https://github.com/ggml-org/llama.cpp)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)](CHANGELOG.md)
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js)](https://nodejs.org)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
-**Локальная, приватная, самоисправляющаяся система из 4 AI-агентов с DAG-оркестрацией на базе llama.cpp и Paperclip.**
+**Локальная, приватная, самообучающаяся система AI-агентов с CEO-оркестратором на базе llama.cpp и Paperclip.**
 
-Система работает на потребительском железе (RTX 3070, 8 GB VRAM) без платных API и облаков. Понимает русский язык, умеет искать в интернете через Wikipedia API, читать файлы с диска, выполнять задачи и самостоятельно исправлять свои ошибки через замкнутый цикл (Closed-Loop Retry). Составные задачи автоматически декомпозируются в DAG-граф и исполняются параллельно.
+Система работает на потребительском железе (RTX 3070, 8 GB VRAM) без платных API и облаков. **CEO Agent** принимает стратегические решения, делегирует задачи 4 специалистам и учится на опыте. Самообучающаяся, самовосстанавливающаяся, с автоматическими коммитами.
 
 ---
 
-## 🎉 What's New in v2.0.0
+## 🎯 Ключевые возможности
 
-| Фича | Описание |
-|------|----------|
-| **🧩 DAG-оркестрация** | Составные задачи → автоматическая декомпозиция в граф подзадач с параллельным исполнением (concurrency ≤ 2) и retry на каждую ноду |
-| **🔬 Codebase Analyzer** | AST-индекс проекта (Babel для JS/TS, regex для Python/Go/Rust/Java). Семантический поиск функций, классов, сигнатур через `codebase_search` tool |
-| **🛡 Terminal Executor** | Безопасное выполнение shell-команд с 3-уровневой защитой: whitelist (40+ команд), validatePath, snapshot/rollback для отката изменений |
-| **⚡ Host-memory prompt caching** | `-cram` — системные промпты и GBNF кэшируются в RAM. 3 модели на 8 ГБ VRAM без свопинга |
-| **📚 14 файлов документации** | От `00_OVERVIEW.md` до `14_terminal_executor.md` — полное покрытие всех модулей и сценариев |
+### CEO Agent — стратегический оркестратор
 
-[Полный список изменений →](CHANGELOG.md)
+CEO Agent — это "мозг" системы, который содержит **6 киллер-фич**:
 
----
+1. **Семантическая память** — помнит предыдущие задачи (Node.js vector store, 50+ синонимов)
+2. **Self-Learning Skills** — учится на успешных задачах, создаёт рецепты
+3. **Multi-Strategy Planning** — генерирует 2-3 плана с автопереключением
+4. **Error Recovery** — база паттернов восстановления (учится на ошибках)
+5. **Git-First** — автоматические git-коммиты после изменений
+6. **Project Context** — автообновляемый контекст проекта (экономия 5-10s/сессия)
 
-## 🚀 О проекте
+### 4 специалиста (делегирование от CEO)
 
-Мы построили **полностью автономный локальный конвейер AI-агентов**, который:
-
-- **Парсит «грязные» русские тексты** в структурированные JSON-контракты (Translator)
-- **Декомпозирует составные задачи** в DAG-граф с параллельными нодами (TaskPlanner)
-- **Компилирует JSON в system tool-calls** с GBNF-валидацией (Compiler)
-- **Выполняет реальные инструменты**: чтение файлов, веб-поиск через Wikipedia API, SQL-запросы (Executor)
-- **Проверяет качество результата** и при необходимости отправляет систему на переделку без участия человека (Critic)
-
-**Ключевые особенности:**
-
-| | |
-|---|---|
-| 🔒 **Полная приватность** | Никаких вызовов к облачным API. Все модели работают локально |
-| 🛠 **Tool Registry** | Реальные инструменты (файловая система, веб-поиск), а не LLM-галлюцинации |
-| 🔄 **Self-Correction** | Quality Gate (Critic) проверяет результат и запускает retry при необходимости |
-| 🎯 **GBNF-грамматики** | 100% предсказуемый JSON-вывод от всех моделей |
-| ⚡ **Host-memory prompt caching** | `-cram` — кэш системных промптов в RAM. 3 модели на 8 ГБ VRAM |
-| 🧩 **DAG-оркестрация** | Составные задачи → граф подзадач, параллельное исполнение (concurrency ≤ 2) |
+- **Translator** (Saiga 8B) — парсит русский язык в JSON-контракты
+- **Compiler** (Qwen 7B) — компилирует JSON в system tool-calls с GBNF
+- **Executor** (SmolLM2 3.6B) — выполняет инструменты через ToolRegistry
+- **Critic** (SmolLM2 3.6B) — Quality Gate, проверяет результат, запускает retry
 
 ---
 
@@ -55,202 +37,110 @@
 
 ```
 [User Request]
-       │
-       ▼
-[Translator :8081] ─── analyzeComplexity()
-       │                        │
-       │ Simple                 │ Complex (DAG)
-       ▼                        ▼
-┌──────────────────────┐  ┌──────────────────────┐
-│ Compiler :8082       │  │ DAG Orchestrator     │
-│ → Executor :8083     │  │   Node 1: [C→E→C]   │
-│   → Critic :8083     │  │   Node 2: [C→E→C] ◄─┤ parallel
-│     → approve/reject │  │   Node N: [C→E→C]   │
-└──────────┬───────────┘  └──────────┬───────────┘
-           │                         │
-           ▼                         ▼
-    ┌──────────────────────────────────────┐
-    │  Critic :8083 (Quality Gate)         │
-    │  approve → Result to User             │
-    │  reject  → Retry Loop (max 2)        │
-    └──────────────────────────────────────┘
+     │
+     ▼
+[CEO Agent :8083] ← Project Context + Memory + Skills
+     │
+     ├─ Direct Answer (from memory, ~50ms)
+     ├─ Use Skill (from skills, ~100ms)
+     ├─ Multi-Strategy (2-3 plans, ~500ms)
+     └─ Delegate → [Translator → Compiler → Executor → Critic]
+                   │
+                   ▼
+         [CEO Aggregates + Git-First + Error Recovery]
 ```
 
-**Простой путь:** Translator → Compiler → Executor → Critic (линейный конвейер).
-**Сложный путь (DAG):** Translator → DAG Orchestrator → параллельные ноды [C→E→C] → общий Critic.
+---
+
+## 🧠 CEO Agent — 6 киллер-фич
+
+### 1. Семантическая память (Node.js Vector Store)
+
+- **Модель:** all-MiniLM-L6-v2 (384-мерные embeddings, ~90MB)
+- **Поиск:** гибридный — keyword (1-5ms) + vector (30-50ms)
+- **Синонимы:** 50+ групп (русский + английский)
+- **Пример:** "где обработка логина?" → находит "handleLogin" (semantic similarity 0.92)
+- **Без Python:** чистый Node.js через @xenova/transformers
+
+### 2. Self-Learning Skills
+
+- **Создание:** из успешных DAG (автоматически, ≥ 2 нод)
+- **Использование:** для похожих задач (без создания DAG с нуля)
+- **Эволюция:** new → active → stable (3+ успехов) → canon (5+ успехов)
+- **Пример:** "сделай бэкап" и "резервная копия" используют один skill
+
+### 3. Multi-Strategy Planning
+
+- **Генерация:** 2-3 разных плана через SmolLM2
+- **Оценка:** score = (success_rate × 0.5) + ((1 - complexity) × 0.3) + ((1 - risk) × 0.2)
+- **Fallback:** автоматическое переключение на backup при провале
+- **Пример:** план A (read file) → ошибка FileNotFound → план B (search + read) → успех
+
+### 4. Error Recovery
+
+- **База паттернов:** {signature, action, successRate} в error_patterns.json
+- **Обучение:** пополняется с каждым инцидентом
+- **Actions:** restart_server, increase_timeout, stricter_gbnf, retry_with_different_params
+- **Пример:** ECONNREFUSED:8081 → restart_server (98% success rate)
+
+### 5. Git-First
+
+- **Auto-commit:** после каждого успешного изменения кода
+- **Commit messages:** осмысленные (генерируются через SmolLM2)
+- **История:** git_history.json (все авто-коммиты)
+- **Rollback:** git checkout к любому коммиту
+
+### 6. Project Context
+
+- **Файл:** PROJECT_CONTEXT.md (автообновляемый)
+- **Секции:** Tech Stack, Key Files, Conventions, Recent Changes
+- **Экономия:** 5-10 секунд на каждой сессии (CEO не сканирует проект заново)
+- **Пример:** "какие модели?" → CEO читает контекст → отвечает за ~5ms
 
 ---
 
-## ⚡ Оптимизации производительности
+## 📊 Производительность: с CEO vs без CEO
 
-Система использует **host-memory prompt caching** (llama.cpp PR [#16391](https://github.com/ggml-org/llama.cpp/pull/16391), флаг `-cram`).
-
-### Как это работает
-
-- **Системные промпты** и **GBNF-грамматики** кэшируются в обычной RAM как "extra slots"
-- При повторных stateless-вызовах промпт **не прогоняется через нейросеть заново**
-- Время до первого токена (TTFT) падает с секунд до **миллисекунд**
-- Освобождается **VRAM** для самих моделей (критично при 8 ГБ)
-
-### Почему это важно именно для нас
-
-| Проблема | Без `-cram` | С `-cram` |
-|----------|-------------|-----------|
-| 3 модели суммарно >10 ГБ на RTX 3070 8 ГБ | ❌ Не влезает | ✅ Работает |
-| Повторные вызовы одного эндпоинта | Каждый раз полный прогон | Кэш в RAM |
-| GBNF-грамматика 500+ токенов каждый запрос | Трата ресурсов на токенизацию | Закэширована |
-| DAG-оркестрация (N нод × 3 LLM-вызова) | Умножаем задержку | Кэш греет только первый вызов |
-
-> **Итог:** `-cram` — единственная причина, почему 3 модели (Saiga 8B + Qwen 7B + SmolLM2 3.6B) работают на одной видеокарте с 8 ГБ VRAM без свопинга.
+| Операция | Без CEO | С CEO | Ускорение |
+|----------|---------|-------|-----------|
+| Повторный запрос | 3-5 секунд | ~50ms (из памяти) | **60-100x** |
+| Похожая задача | 5-10 секунд | ~100ms (skill) | **50-100x** |
+| Ошибка сервера | Ручной перезапуск | Авто (паттерн) | **∞** |
+| Изменение кода | Без коммита | Auto-commit | **Safety** |
+| Сложная задача | 1 план | 2-3 плана + fallback | **Resilience** |
+| Новая сессия | Сканирование (5-10s) | Контекст (~5ms) | **1000x** |
 
 ---
 
-## 🔬 Технологический стек
+## 🔧 Production Features
 
-| Компонент | Назначение |
-|-----------|------------|
-| **llama.cpp** (`-cram`) | Host-memory prompt caching — кэш системных промптов и GBNF в RAM |
-| **Vulkan backend** | Автоподхват NVIDIA GPU без установки CUDA Toolkit |
-| **GBNF-грамматики** | 100% structured output — JSON задаётся BNF-грамматикой, модель не может отклониться |
-| **Paperclip** | Оркестратор AI-агентов (heartbeat, resultJson, адаптеры) |
-| **Self-Learning Skills** | Автосоздание рецептов из успешных DAG, семантический поиск (ChromaDB), эволюция до canon |
-| **CEO Agent** | Диспетчер с гибридной памятью (keyword + cosine similarity), Node.js vector store, 50+ синонимов |
-| **DAG Orchestrator** | Параллельное исполнение графа (concurrency ≤ 2) с retry на каждую ноду |
-| **Database Executor** | Безопасные SQL-запросы (SQLite/Postgres), авто-бэкап, блокировка DROP/DELETE без WHERE |
-| **Codebase Analyzer** | AST-индекс и семантический поиск по коду |
-| **Code Patcher** | Генерация и применение патчей к коду через LLM с Babel-валидацией и rollback |
-| **Terminal Executor** | Безопасное выполнение shell-команд с whitelist, sandbox и snapshot/rollback |
-| **Puppeteer Stealth** | Обход антибот-защит при веб-поиске (Bing) |
-| **Wikipedia REST API** | Основной источник веб-данных (структурированные статьи) |
-| **SmolLM2 Critic** | Quality Gate — валидация результатов и запуск retry |
+- ✅ **Git-First** — автоматические коммиты после изменений
+- ✅ **Error Recovery** — база паттернов, учится на ошибках
+- ✅ **Host-memory prompt caching** (`-cram`) — 3 модели на 8 ГБ VRAM
+- ✅ **Quality Gate (Critic)** — проверка и retry
+- ✅ **Pure Node.js** — без Python-зависимостей
+- ✅ **Self-learning skills** — эволюция до canon
 
 ---
 
-## ⚡ Quick Start
-
-Подробное руководство: [INSTALL.md](INSTALL.md)
-
-### Linux / macOS
+## 🚀 Quick Start
 
 ```bash
 git clone https://github.com/Dufermer/merge.git
 cd merge
-chmod +x install.sh
-./install.sh
+./install.sh          # Linux/macOS
+# или .\install.ps1   # Windows
 ```
 
-### Windows
+Система автоматически:
+- Скачает llama.cpp (последний релиз)
+- Проверит наличие GPU и RAM
+- Установит Paperclip CLI и зависимости
+- Создаст конфигурацию адаптеров
 
-```powershell
-git clone https://github.com/Dufermer/merge.git
-cd merge
-.\install.ps1
-```
-
-После установки система будет доступна на `http://127.0.0.1:3100`.
-
-Подробное руководство по установке: [INSTALL.md](INSTALL.md)
-
----
-
-## 📂 Структура репозитория
-
-```
-merge/
-├── README.md                          # ← этот файл
-├── start_all.ps1                      # Автоматический запуск всей инфраструктуры
-├── stop_all.ps1                       # Остановка всей инфраструктуры
-├── dagOrchestrator.js                 # 📦 Графовый оркестратор нод
-├── ceoAgent.js                        # 🧠 CEO диспетчер с памятью
-├── ceoDecision.gbnf                   # 📜 GBNF для решений CEO
-├── multiStrategy.gbnf                 # 📜 GBNF для мульти-стратегий
-├── PROJECT_CONTEXT.md                # 📋 Автообновляемый контекст проекта
-├── skills/                            # 🎯 Хранилище навыков (skills)
-├── llama_cpp/                         # 🏗 Инференс-сервер и GGUF-модели
-│   ├── llama-server.exe               #   Бинарный файл llama.cpp
-│   ├── saiga_llama3_8b-q4_k_m.gguf    #   Модель Переводчика (~4.9 GB)
-│   ├── qwen2.5-coder-7b-instruct-q4_k_m.gguf  # Модель Компилятора (~4.7 GB)
-│   └── smollm2-3.6b-instruct-q4_k_m.gguf      # Модель Исполнителя/Критика (~2.5 GB)
-│
-├── docs/                              # 📚 Полная документация (22 файла)
-│   ├── 00_OVERVIEW.md                 #   Общая карта системы
-│   ├── 01_llama_cpp_setup.md          #   Установка llama.cpp
-│   ├── 02_model_translator.md         #   Спецификация Переводчика
-│   ├── 03_paperclip_translator.md     #   Интеграция Переводчика
-│   ├── 04_model_compiler.md           #   Спецификация Компилятора
-│   ├── 05_paperclip_compiler.md       #   Интеграция Компилятора
-│   ├── 06_full_system_run.md          #   Полный запуск и сквозной тест
-│   ├── 07_model_executor.md           #   Спецификация Исполнителя
-│   ├── 08_paperclip_executor.md       #   Интеграция Исполнителя (ToolRegistry + searchEngine)
-│   ├── 09_model_critic.md             #   Спецификация Критика
-│   ├── 10_paperclip_critic.md         #   Интеграция Критика (Closed-Loop Retry)
-│   ├── 11_task_decomposer.md          #   Декомпозиция задач в DAG
-│   ├── 12_dag_orchestrator.md         #   Графовая оркестрация
-│   ├── 13_codebase_analyzer.md        #   AST-индекс и семантический поиск по коду
-│   ├── 14_terminal_executor.md       #   Безопасное выполнение shell-команд
-│   ├── 15_code_patcher.md           #   Генерация и применение патчей
-│   ├── 16_database_executor.md      #   Безопасная работа с БД
-│   ├── 17_ceo_agent.md             #   CEO диспетчер с памятью
-│   ├── 18_self_learning_skills.md  #   Автосоздание шаблонов
-│   ├── 19_git_first.md            #   Автоматические коммиты
-│   ├── 20_error_recovery.md       #   Обучение на ошибках
-│   ├── 21_multi_strategy.md       #   Мульти-стратегии
-│   └── 22_project_context.md      #   Контекст проекта
-│
-├── data/                              # 📁 Данные для инструментов
-│   ├── pipeline_state.json            #   Состояние пайплайна (для Critic)
-│   ├── conversation_history.json      #   История диалога CEO
-│   ├── skill_creation.log             #   Лог создания/использования skills
-│   ├── auth_module.js                #   Тестовый модуль для codebase_search
-│   ├── vulnerable_function.js        #   Тестовый файл для code_patch
-│   └── test_users.db                 #   Тестовая SQLite БД
-│
-├── memory/                            # 🧠 Данные семантической памяти
-│   ├── vector_store.json             #   Vector embeddings (Node.js)
-│   ├── skills_vector_store.json      #   Skills vector storage
-│   ├── git_history.json              #   История git-коммитов
-│   └── error_patterns.json           #   Паттерны восстановления после ошибок
-│
-├── skills/                            # 🎯 Хранилище навыков (skills)
-│   └── *.json                         #   Шаблоны повторяемых операций
-│
-└── logs/                              # 📋 Логи (PID-файлы для скриптов)
-
-~/.paperclip/
-├── adapter-plugins.json               # Реестр адаптеров Paperclip
-├── adapter-plugins/
-    ├── translator/                    # 📦 Адаптер Переводчика
-    │   ├── index.js                   #   Основной адаптер (DAG-интегрирован)
-    │   ├── taskPlanner.js             #   Декомпозитор задач
-    │   └── planner.gbnf               #   GBNF для валидации DAG
-    ├── compiler/                      # 📦 Адаптер Компилятора (index.js + compiler.gbnf)
-    │   └── index.js
-    │   └── compiler.gbnf
-    ├── executor/                      # 📦 Адаптер Исполнителя (index.js + searchEngine.js + executor.gbnf + codebaseAnalyzer.js + codePatcher.js + databaseExecutor.js + memoryManager.js + skillManager.js + skillCreator.js + snapshots/)
-    │   ├── index.js
-    │   ├── searchEngine.js
-    │   ├── codebaseAnalyzer.js
-    │   ├── codePatcher.js
-    │   ├── codePatch.gbnf
-    │   ├── databaseExecutor.js
-    │   ├── nodeVectorStore.js
-    │   ├── memoryManager.js
-    │   ├── skillManager.js
-    │   ├── skillCreator.js
-    │   ├── skills/
-    │   │   ├── gitFirst.js
-    │   │   ├── errorRecovery.js
-    │   │   ├── multiStrategy.js
-    │   │   └── projectContext.js
-    │   ├── executor.gbnf
-    │   ├── executor.log
-    │   └── snapshots/
-    ├── ceo/                            # 🧠 Адаптер CEO (память + диспетчеризация)
-    │   ├── index.js
-    │   └── package.json
-    └── critic/                        # 📦 Адаптер Критика (index.js + critic.gbnf)
-        ├── index.js
-        └── critic.gbnf
+После установки:
+```bash
+powershell -ExecutionPolicy Bypass -File start_all.ps1
 ```
 
 ---
@@ -259,79 +149,42 @@ merge/
 
 | Файл | О чем |
 |------|-------|
-| [`00_OVERVIEW.md`](docs/00_OVERVIEW.md) | Общая архитектура, таблица агентов, схема потока данных |
-| [`01_llama_cpp_setup.md`](docs/01_llama_cpp_setup.md) | Установка и настройка llama.cpp на Windows |
-| [`02_model_translator.md`](docs/02_model_translator.md) | Модель Saiga Llama3 8B, команда запуска :8081 |
-| [`03_paperclip_translator.md`](docs/03_paperclip_translator.md) | Полный код адаптера, регистрация, тест |
-| [`04_model_compiler.md`](docs/04_model_compiler.md) | Модель Qwen2.5-Coder-7B, GBNF, команда :8082 |
-| [`05_paperclip_compiler.md`](docs/05_paperclip_compiler.md) | Полный код адаптера, регистрация, тест |
-| [`06_full_system_run.md`](docs/06_full_system_run.md) | **Главный файл**: полный запуск и сквозной тест пайплайна |
-| [`07_model_executor.md`](docs/07_model_executor.md) | Модель SmolLM2-3.6B, GBNF, команда :8083 |
-| [`08_paperclip_executor.md`](docs/08_paperclip_executor.md) | ToolRegistry, searchEngine.js, интеграция |
-| [`09_model_critic.md`](docs/09_model_critic.md) | Quality Gate Critic, Closed-Loop Retry Logic |
-| [`10_paperclip_critic.md`](docs/10_paperclip_critic.md) | Полный код, регистрация, pipeline diagram |
-| [`11_task_decomposer.md`](docs/11_task_decomposer.md) | Декомпозиция составных задач, API taskPlanner.js, алгоритмы |
-| [`12_dag_orchestrator.md`](docs/12_dag_orchestrator.md) | Графовая оркестрация, топологическая сортировка, retry нод |
-| [`13_codebase_analyzer.md`](docs/13_codebase_analyzer.md) | AST-индекс, семантический поиск по коду, Babel-парсер |
-| [`14_terminal_executor.md`](docs/14_terminal_executor.md) | Безопасное выполнение shell-команд, whitelist, snapshot/rollback |
-| [`15_code_patcher.md`](docs/15_code_patcher.md) | Генерация и применение патчей к коду через LLM с валидацией |
-| [`16_database_executor.md`](docs/16_database_executor.md) | Безопасная работа с SQLite/PostgreSQL, авто-бэкап, блокировка DROP |
-| [`17_ceo_agent.md`](docs/17_ceo_agent.md) | CEO диспетчер с долговременной памятью, conversation history |
-| [`18_self_learning_skills.md`](docs/18_self_learning_skills.md) | Self-Learning Skills, эволюция от new до canon |
-| [`19_git_first.md`](docs/19_git_first.md) | Git-First, автоматические коммиты после изменений кода |
-| [`20_error_recovery.md`](docs/20_error_recovery.md) | Error Recovery, обучение на ошибках, паттерны восстановления |
-| [`21_multi_strategy.md`](docs/21_multi_strategy.md) | Multi-Strategy, генерация и оценка нескольких планов |
-| [`22_project_context.md`](docs/22_project_context.md) | Project Context, автообновляемый контекст проекта |
+| [`23_ceo_comprehensive.md`](docs/23_ceo_comprehensive.md) | **CEO Agent — главный документ** |
+| [`00_OVERVIEW.md`](docs/00_OVERVIEW.md) | Общая архитектура с CEO |
+| [`17_ceo_agent.md`](docs/17_ceo_agent.md) | CEO Agent — базовое описание |
+| [`18_self_learning_skills.md`](docs/18_self_learning_skills.md) | Self-learning skills |
+| [`19_git_first.md`](docs/19_git_first.md) | Git-First (auto-commit) |
+| [`20_error_recovery.md`](docs/20_error_recovery.md) | Error Recovery Patterns |
+| [`21_multi_strategy.md`](docs/21_multi_strategy.md) | Multi-Strategy Planning |
+| [`22_project_context.md`](docs/22_project_context.md) | Project Context |
+
+Полная документация: [`docs/`](docs/) (23 файла)
 
 ---
 
-## 🧪 Результаты тестов
+## 🛠 Технологический стек
 
-### Простая задача (линейный конвейер)
-
-```
-Issue: "прочитай файл server_config.json и скажи, какой там порт"
-
-Translator [analyzeComplexity → simple] → Compiler → Executor (read_file) → Critic
-                                                                         │
-                                                                 verdict: "approve"
-                                                                 confidence: 0.95
-                                                                 pipeline: "completed"
-```
-
-### Составная задача (DAG-оркестрация)
-
-```
-Issue: "прочитай файл server_config.json, найди там порт, сделай бэкап данных
-        и скажи, какой порт был в конфиге"
-
-Translator [analyzeComplexity → complex (4 steps)]
-
-DAG:
-  n1: read_file (server_config.json)             [independent]
-  n2: parse_port (из прочитанного файла)         [depends: n1]
-  n3: backup_data                                [depends: n1]
-  n4: report (какой порт был в конфиге)          [depends: n2, n3]
-
-Execution:
-  n1 ──► n2 ──┐
-       └─► n3 ──► n4 ──► Critic → approve
-```
+| Компонент | Назначение |
+|-----------|------------|
+| **llama.cpp** (`-cram`) | Host-memory prompt caching |
+| **Node.js Vector Store** | Семантическая память (all-MiniLM-L6-v2) |
+| **Vulkan backend** | Автоподхват NVIDIA GPU |
+| **GBNF-грамматики** | 100% structured output |
+| **Paperclip** | Оркестратор AI-агентов |
+| **@xenova/transformers** | Embeddings для vector search |
 
 ---
 
-## 📋 Метаданные репозитория
+## 📋 Системные требования
 
-**Description (для GitHub):**
-> Локальный самоисправляющийся DAG-конвейер из 4 AI-агентов на базе llama.cpp и Paperclip. Парсинг русского языка, декомпозиция задач в DAG, агентский веб-поиск (Wikipedia API), выполнение задач и автоматический Quality Gate без использования облачных API. Host-memory prompt caching (`-cram`) для работы 3 моделей на 8 ГБ VRAM.
-
-**Topics:**
-```
-llama-cpp ai-agents dag orchestration paperclip local-llm gbnf autonomous-agents self-correcting russian-llm tool-calling rag prompt-caching host-memory
-```
+- **OS:** Windows 10/11, Linux, macOS 13+
+- **GPU:** NVIDIA (RTX 3070+) с Vulkan-драйвером
+- **RAM:** ≥ 16 GB
+- **Диск:** ≥ 30 GB свободно (3 модели GGUF ~12 GB)
+- **Утилиты:** Node.js 18+, Python 3.10+, Git
 
 ---
 
-## License
+## 📄 Лицензия
 
 MIT

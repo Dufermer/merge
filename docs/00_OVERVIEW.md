@@ -1,88 +1,121 @@
-# Self-Correcting DAG Agent — Обзор архитектуры (v2.0.0)
+# Архитектура системы — CEO Agent как центральный компонент (v2.0.0)
 
 ## Назначение
 
-Локальный конвейер агентов для Paperclip. Каждый агент — stateless HTTP-запрос к
-llama.cpp с GBNF-грамматикой, зажимающей вывод в строгий JSON. Агенты соединены
-последовательно: выход одного → вход следующего.
+Локальная, приватная, самообучающаяся система AI-агентов. **CEO Agent** — стратегический оркестратор, который принимает все пользовательские запросы, ищет ответ в памяти, использует навыки (skills), генерирует несколько стратегий или делегирует специалистам.
 
-## Поток данных
+## Архитектура
 
 ```
-User Input (русский "грязный" текст)
-    │
-    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  Translator  │  :8081  │  Saiga Llama3 8B  │  JSON-контракт │
-│  (intent + target + params)                                  │
-└──────────────────────────────────────────────────────────────┘
-    │
-    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  Compiler   │  :8082  │  Qwen2.5-Coder-7B  │  tool-call     │
-│  (system_command + tool_name + strict_params)                │
-└──────────────────────────────────────────────────────────────┘
-    │
-    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  Executor   │  :8083  │  SmolLM2-3.6B      │  Execution     │
-│  (status + tool_executed + logs + final_state)               │
-└──────────────────────────────────────────────────────────────┘
-    │
-    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  Critic     │  :8083  │  SmolLM2-3.6B      │  Quality Gate  │
-│  (approve/reject + closed-loop retry)                        │
-└──────────────────────────────────────────────────────────────┘
-    │           ─ ─ ─ retry (max 2) ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─┐
-    ▼                                                           │
-  Result → Paperclip / пользователь          Compiler ←─────────┘
+[User Request]
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────┐
+│  CEO Agent :8083                                             │
+│  ─────────────────────────────────────────────────           │
+│  Phase 0: Project Context (PROJECT_CONTEXT.md)              │
+│  Phase 1: Search Memory (vector + keyword) + Skills         │
+│  Phase 2: Decision (direct / skill / multi-strategy / dag)  │
+│  Phase 3: Execute + Git-First + Error Recovery              │
+│  Phase 4: Learn (store memory + create skill + update ctx)  │
+└─────────────────────────────────────────────────────────────┘
+     │
+     ├─ Direct Answer (from memory)       ~50ms
+     ├─ Use Skill (from skills library)   ~100ms
+     ├─ Multi-Strategy (2-3 plans)       ~500ms
+     │
+     └─ Delegate to Specialists:
+            │
+            ▼
+        ┌──────────────────────────────────────────────────────┐
+        │  Translator :8081  (Saiga 8B) — парсинг русского в   │
+        │  JSON-контракт {intent, target, params}               │
+        └──────────────────────────────────────────────────────┘
+            │
+            ▼
+        ┌──────────────────────────────────────────────────────┐
+        │  Compiler :8082   (Qwen 7B) — компиляция JSON в      │
+        │  system tool-call с GBNF-валидацией                   │
+        └──────────────────────────────────────────────────────┘
+            │
+            ▼
+        ┌──────────────────────────────────────────────────────┐
+        │  Executor :8083   (SmolLM2 3.6B) — ToolRegistry      │
+        │  7 инструментов: read_file, web_search, codebase_    │
+        │  search, terminal_exec, code_patch, db_query,         │
+        │  list_files                                           │
+        └──────────────────────────────────────────────────────┘
+            │
+            ▼
+        ┌──────────────────────────────────────────────────────┐
+        │  Critic :8083    (SmolLM2 3.6B) — Quality Gate       │
+        │  approve / reject + closed-loop retry                 │
+        └──────────────────────────────────────────────────────┘
+            │           ── retry (max 2) ── Compiler
+            ▼
+    Result → CEO Aggregates + Git-First + Error Recovery
 ```
 
 ## Таблица агентов
 
 | Агент | Роль | Модель | Порт | Статус |
 |-------|------|--------|------|--------|
-| translator | Парсинг русского текста в JSON-контракт | Saiga Llama3 8B (Q4_K_M) | 8081 | ✅ Готов |
-| compiler | Компиляция JSON-контракта в system tool-call | Qwen2.5-Coder-7B-Instruct | 8082 | ✅ Готов |
-| executor | Генерация mock/report, вызов ToolRegistry (7 инструментов) | SmolLM2-3.6B-Instruct | 8083 | ✅ Готов |
-| ceo | Диспетчер с памятью, поиск в истории, делегирование пайплайна | SmolLM2-3.6B-Instruct | 8083* | ✅ Готов |
-| critic | Quality Gate — валидация + closed-loop retry | SmolLM2-3.6B-Instruct | 8083* | ✅ Готов |
+| **ceo** | Стратегический оркестратор (память, навыки, стратегии) | SmolLM2-3.6B | 8083* | ✅ Готов |
+| translator | Парсинг русского текста в JSON-контракт | Saiga Llama3 8B | 8081 | ✅ Готов |
+| compiler | Компиляция JSON-контракта в system tool-call | Qwen2.5-Coder-7B | 8082 | ✅ Готов |
+| executor | Выполнение инструментов через ToolRegistry (7 инструментов) | SmolLM2-3.6B | 8083 | ✅ Готов |
+| critic | Quality Gate — валидация + closed-loop retry | SmolLM2-3.6B | 8083* | ✅ Готов |
 
-## Принципы
+## CEO Agent — 6 киллер-фич
 
-- **Stateless** — каждый вызов execute() не хранит историю. Никаких сессий.
-- **GBNF-grammar** — каждая модель выдаёт строго валидный JSON. Никакой свободы.
-- **Модульность** — каждая модель живёт на своём порту, заменяется независимо.
-- **Vulkan** — единый рантайм для GPU на Windows. Без CUDA Toolkit.
+| № | Фича | Модуль | Описание |
+|---|------|--------|----------|
+| 1 | Семантическая память | `memoryManager.js` + `nodeVectorStore.js` | all-MiniLM-L6-v2, 50+ синонимов, гибридный поиск |
+| 2 | Self-Learning Skills | `skillManager.js` + `skillCreator.js` | Создание рецептов из DAG, эволюция new→canon |
+| 3 | Multi-Strategy | `multiStrategy.js` | 2-3 плана, оценка risk/complexity/success, fallback |
+| 4 | Error Recovery | `errorRecovery.js` | База паттернов, учится на ошибках, 6 типов actions |
+| 5 | Git-First | `gitFirst.js` | Auto-commit после изменений, генерация commit messages |
+| 6 | Project Context | `projectContext.js` | PROJECT_CONTEXT.md, автообновление, экономия 5-10s |
 
 ## Файлы документации
 
 | Файл | Назначение |
 |------|------------|
-| `00_OVERVIEW.md` | Общая карта системы (этот файл) |
-| `01_llama_cpp_setup.md` | Установка инференс-сервера llama.cpp |
-| `02_model_translator.md` | Спецификация модели Переводчика |
-| `03_paperclip_translator.md` | Интеграция Переводчика в Paperclip |
-| `04_model_compiler.md` | Спецификация модели Компилятора |
-| `05_paperclip_compiler.md` | Интеграция Компилятора в Paperclip |
-| `06_full_system_run.md` | Полный запуск и сквозной тест системы |
-| `07_model_executor.md` | Спецификация модели Исполнителя |
-| `08_paperclip_executor.md` | Интеграция Исполнителя в Paperclip |
-| `09_model_critic.md` | Спецификация модели Критика |
-| `10_paperclip_critic.md` | Интеграция Критика (Closed-Loop Retry) |
-| `11_task_decomposer.md` | Task Planner — DAG-декомпозиция составных задач |
-| `12_dag_orchestrator.md` | DAG Orchestrator — графовое исполнение подзадач |
-| `13_codebase_analyzer.md` | Codebase Analyzer — AST-индекс и семантический поиск по коду |
-| `14_terminal_executor.md` | Terminal Executor — безопасное выполнение shell-команд |
-| `15_code_patcher.md` | Code Patcher — генерация и применение патчей через LLM |
-| `16_database_executor.md` | Database Executor — безопасная работа с SQLite/PostgreSQL |
-| `17_ceo_agent.md` | CEO Agent & Memory — диспетчер с долговременной памятью |
-| `18_self_learning_skills.md` | Self-Learning Skills — автосоздание шаблонов из успешных задач |
-| `19_git_first.md` | Git-First — автоматические коммиты после изменений |
-| `20_error_recovery.md` | Error Recovery — обучение на ошибках, паттерны восстановления |
-| `21_multi_strategy.md` | Multi-Strategy — генерация и оценка нескольких планов |
-| `22_project_context.md` | Project Context — автообновляемый контекст проекта |
+| `23_ceo_comprehensive.md` | **CEO Agent — главный документ** |
+| `00_OVERVIEW.md` | Общая архитектура (этот файл) |
+| `17_ceo_agent.md` | CEO Agent — базовое описание |
+| `18_self_learning_skills.md` | Self-Learning Skills |
+| `19_git_first.md` | Git-First (auto-commit) |
+| `20_error_recovery.md` | Error Recovery Patterns |
+| `21_multi_strategy.md` | Multi-Strategy Planning |
+| `22_project_context.md` | Project Context |
+| `01`-`16` | Остальные модули |
+
+## Что работает прямо сейчас
+
+### CEO Agent (новое)
+- ✅ **Семантическая память:** гибридный поиск keyword + vector
+- ✅ **Self-Learning Skills:** автосоздание рецептов, эволюция до canon
+- ✅ **Multi-Strategy:** генерация 2-3 планов с fallback
+- ✅ **Error Recovery:** база паттернов, 6 actions
+- ✅ **Git-First:** auto-commit после code_patch
+- ✅ **Project Context:** автообновляемый PROJECT_CONTEXT.md
+- ✅ **Conversation history:** последние 10 сообщений
+
+### Специалисты (делегирование)
+- ✅ Translator: парсинг русскоязычных команд в JSON-контракт
+- ✅ Compiler: компиляция JSON в system tool-call с GBNF
+- ✅ Executor: 7 инструментов (read_file, web_search, codebase_search, terminal_exec, code_patch, db_query, list_files)
+- ✅ Critic: Quality Gate — проверка результата, approve/reject, closed-loop retry
+- ✅ Paperclip: 5 кастомных адаптеров (ceo, translator, compiler, executor, critic)
+
+### Инфраструктура
+- ✅ DAG Orchestrator: графовое исполнение подзадач с параллельностью и retry
+- ✅ Task Planner: анализ сложности, DAG-декомпозиция
+- ✅ Database Executor: SQLite/PostgreSQL с авто-бэкапом
+- ✅ Terminal Executor: безопасное выполнение shell-команд
+- ✅ Host-memory prompt caching (-cram): 3 модели на 8 ГБ VRAM
+- ✅ Pure Node.js vector store: без Python-зависимостей
 
 ## Установка
 
@@ -104,87 +137,19 @@ cd merge
 .\install.ps1
 ```
 
----
-
 ## Требования к окружению
-- **OS:** Windows 10/11
+
+- **OS:** Windows 10/11, Linux, macOS 13+
 - **GPU:** NVIDIA (RTX 3070 и выше) с Vulkan-драйвером
 - **RAM:** ≥ 16 GB
 - **Диск:** ≥ 30 GB свободно (модели GGUF)
-- **Утилиты:** curl, python3, npx (Paperclip CLI)
+- **Утилиты:** curl, python3, Node.js 18+, Git
 
----
+## Принципы
 
-## ✅ ИТОГ: 🧠 Self-Correcting DAG-Based Autonomous Agent
-
-Базовый MoE-конвейер из 3 stateless-агентов работает стабильно:
-
-| Агент | Статус | Модель | Порт | GBNF |
-|-------|--------|--------|------|------|
-| Translator (Agent #1) | ✅ Проверен | Saiga Llama3 8B | 8081 | Нет (system prompt) |
-| Compiler (Agent #2) | ✅ Проверен | Qwen2.5-Coder-7B | 8082 | `compiler.gbnf` |
-| Executor (Agent #3) | ✅ Адаптер готов | SmolLM2-3.6B | 8083 | `executor.gbnf` |
-
-GBNF-грамматики обеспечивают 100% предсказуемость вывода — модель физически
-не может выйти за пределы заданной JSON-схемы.
-
-Мастер-скрипты `start_all.ps1` и `stop_all.ps1` позволяют развернуть
-систему на чистой машине за 1 минуту.
-
-### Результаты финального теста (2026-06-08)
-
-```
-User input: "nado by backup bazy sdelat pered relizom, a to strashno"
-
-Translator → {"intent":"refactor","target":"database","params":{...}}
-Compiler   → {"tool_name":"backup","system_command":"...","strict_params":{...}}
-Executor   → ⚠️ требует запуска :8083 (SmolLM2 не запущен в момент теста)
-```
-
-### Что работает прямо сейчас
-
-- ✅ Translator: парсинг русскоязычных команд в JSON-контракт (intent/target/params)
-- ✅ Compiler: компиляция JSON в system tool-call с GBNF-валидацией
-- ✅ Executor: запуск инструментов через ToolRegistry + поиск через searchEngine.js
-- ✅ **Critic: Quality Gate — проверка результата, approve/reject, closed-loop retry (макс 2 попытки)**
-- ✅ Paperclip: четыре кастомных адаптера загружены и работают
-- ✅ Pipeline: ручная передача контекста через `description` задачи + `pipeline_state.json`
-- ✅ Scripts: `start_all.ps1` / `stop_all.ps1` с поддержкой 3 серверов
-- ✅ **Self-Correction: при reject Критика → автоматический retry Компилятора + Исполнителя**
-- ✅ **Task Planner: анализ сложности, DAG-декомпозиция составных задач (taskPlanner.js)**
-- ✅ **DAG Orchestrator: графовое исполнение подзадач с параллельностью и retry (dagOrchestrator.js)**
-- ✅ **Codebase Analyzer: AST-индекс + семантический поиск по коду (codebaseAnalyzer.js + codebase_search tool)**
-- ✅ **Safe terminal execution with automatic rollback (terminal_exec tool with whitelist, sandbox, snapshot/rollback)**
-- ✅ **Code Patcher: генерация и применение патчей к коду через LLM с верификацией и rollback (codePatcher.js + code_patch tool)**
-- ✅ **Database Executor: безопасное выполнение SQL-запросов с авто-бэкапом и блокировкой деструктивных операций (databaseExecutor.js + db_query tool)**
-- ✅ **CEO Agent: диспетчер с долговременной памятью — повторные запросы отвечает мгновенно из кэша (ceoAgent.js + memoryManager.js)**
-- ✅ **Self-Learning Skills: автосоздание шаблонов из успешных задач, эволюция до canon (skillManager.js + skillCreator.js)**
-- ✅ **Git-First: автоматические git-коммиты после каждого успешного изменения кода (gitFirst.js)**
-- ✅ **Error Recovery: система учится на ошибках, применяет проверенные паттерны восстановления (errorRecovery.js)**
-- ✅ **Multi-Strategy: генерация 2-3 планов, оценка по риску/сложности, автопереключение при провале (multiStrategy.js)**
-- ✅ **Project Context: автообновляемый файл с контекстом проекта, CEO читает при старте (projectContext.js + PROJECT_CONTEXT.md)**
-
-## Roadmap (следующие шаги)
-
-### 🔜 Шаг 1: Реальные инструменты для Executor
-Заменить mock-генерацию на реальные вызовы: SQL (pg8000), файловая система,
-REST API. Executor будет не генерировать отчёт, а выполнять команду.
-
-### 🔜 Шаг 2: Агент #4 (Critic)
-Добавить четвёртый stateless-агент, который верифицирует результат
-Исполнителя перед отдачей пользователю. Модель: любая 3-7B. GBNF: `{"valid":bool,"issues":[...],"suggestions":[...]}`.
-
-### 🔜 Шаг 3: Оптимизация VRAM
-При 8 GB VRAM (RTX 3070) все три модели одновременно не помещаются.
-Решение: загружать модели в VRAM только на время их фазы конвейера
-(on-demand loading через llama.cpp CLI с `--no-warmup`).
-
-### 🔜 Шаг 4: Единый API-шлюз
-Создать FastAPI-сервер, который принимает задачу одним POST-запросом
-и сам прогоняет через 3-ступенчатый конвейер, возвращая финальный
-resultJson. Без ручного копирования `description` между шагами.
-
-### 🔜 Шаг 5: Автоматический pipeline в Paperclip
-Дождаться, когда Paperclip добавит поддержку цепочек агентов (pipeline),
-чтобы контекст передавался автоматически без `UPDATE issues SET description`. 
-
+- **Stateless** — каждый вызов execute() не хранит историю. CEO Agent добавляет stateful-слой через память.
+- **GBNF-grammar** — каждая модель выдаёт строго валидный JSON.
+- **Модульность** — каждая модель живёт на своём порту, заменяется независимо.
+- **Vulkan** — единый рантайм для GPU на Windows. Без CUDA Toolkit.
+- **Git-First** — каждое изменение кода → осмысленный коммит.
+- **Self-learning** — система учится на успешных задачах и ошибках.
