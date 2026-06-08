@@ -15,6 +15,13 @@ const PAPERCLIP_API = "http://127.0.0.1:3100/api";
 const TRANSLATOR_AGENT_ID = "badd8cf8-b72d-492a-bdca-c29dd9bc16f0";
 const COMPANY_ID = "793573ec-9d0c-44de-a5e6-477fbf16cb64";
 
+const SkillAutoCreator = require("./skillAutoCreator");
+const MemoryNudge = require("./memoryNudge");
+const SessionSearch = require("./sessionSearch");
+const skillCreator = new SkillAutoCreator();
+const memoryNudge = new MemoryNudge();
+const sessionSearch = new SessionSearch();
+
 function log(msg) {
   const line = `[${new Date().toISOString()}] ${msg}`;
   console.log(line);
@@ -215,6 +222,24 @@ async function processTask(task, options = {}) {
   } else {
     log(`[CEOv2] NOT saving error to memory`);
   }
+  
+  // Skills: auto-create after complex successful tasks
+  const shouldCreate = await skillCreator.shouldCreateSkill(task, result);
+  if (shouldCreate) {
+    const skillId = await skillCreator.createSkill(task, result);
+    log(`[CEOv2] Created skill: ${skillId}`);
+  }
+  
+  // Memory nudge: periodic self-reflection
+  if (memoryNudge.increment()) {
+    const recentTasks = [{ userInput: task, answer: result.answer, success: !isError, executionTime: elapsed }];
+    const reflection = await memoryNudge.performNudge(recentTasks);
+    log(`[CEOv2] Memory nudge: ${JSON.stringify(reflection)}`);
+  }
+  
+  // Session search: index for cross-session recall
+  await sessionSearch.indexSession(options.issueId || "local", task, result.answer, []);
+  log(`[CEOv2] Session indexed`);
 
   return {
     answer: result.answer,

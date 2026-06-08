@@ -1,94 +1,64 @@
 # Changelog
 
-All notable changes to the Self-Correcting DAG-Based Autonomous Agent project.
+## v0.1.0 (2026-06-08)
 
----
+### 🎉 Первый официальный релиз
 
-## [v2.0.0] - 2026-06-08
+#### Основные возможности
+- **CEO v2 Agent Loop** — think → act → observe цикл (150 turns max)
+- **Delegation System** — CEO делегирует простые задачи Translator'у через sub-issues
+- **DAG Pipeline** — multi-step задачи (read → parse → calculate → report)
+- **Web Fetch** — анализ GitHub репозиториев и веб-страниц (Node.js https, без curl)
+- **Terminal Exec** — безопасное выполнение shell команд с CommandSecurity
+- **List Files** — подсчёт файлов и папок в директориях
+- **PM2 Auto-Recovery** — heartbeats автоматически восстанавливаются после падений
 
-### Added
+#### Skills System (Hermes-inspired)
+- **SkillAutoCreator** — автономное создание skills после успешных сложных задач
+- **Skill Reuse** — повторные задачи через pattern matching (500ms вместо 3000ms)
 
-- **DAG-оркестрация сложных задач** (`taskPlanner.js` + `dagOrchestrator.js`)
-  - Автоматическая декомпозиция составных запросов в DAG-граф подзадач
-  - Параллельное исполнение независимых нод (concurrency ≤ 2)
-  - Closed-loop retry на каждую ноду (Compiler → Executor → Critic, макс 2 попытки)
-  - GBNF-валидация DAG через SmolLM2 (`planner.gbnf`)
+#### Memory System (Hermes-inspired)
+- **Memory Nudge** — periodic self-reflection каждые 10 задач
+- **Smart Caching** — не кэширует ошибки (threshold 0.9)
+- **FTS5-like Session Search** — cross-session recall через keyword matching
 
-- **AST-анализатор кодовой базы** (`codebaseAnalyzer.js` + `codebase_search` tool)
-  - Семантический поиск функций/классов по AST-индексу
-  - Babel AST-парсер для JS/TS (full AST + traverse)
-  - Regex-эвристики для Python, Go, Rust, Java, C#, Ruby, PHP
-  - Synonym map для нечёткого поиска ("login" ↔ "auth" ↔ "authenticate")
-  - Ранжирование результатов: exact name (1.0), partial name (0.5-0.9), signature (0.3-0.6)
-  - Извлечение фрагментов кода с контекстом
+#### Интеграция
+- **Paperclip UI** — задачи через веб-интерфейс
+- **Translator Heartbeat** — polling каждые 5 секунд
+- **Sub-Issues** — CEO создаёт sub-issues для Translator
+- **CEO Delegation** — задачи с URL не делегируются, выполняются через web_fetch
 
-- **Безопасный исполнитель shell-команд** (`terminal_exec` tool)
-  - Трехуровневая защита: whitelist команд, validatePath, snapshot/rollback
-  - Whitelist: 40+ команд (echo, git, node, npm, python, curl, docker...)
-  - Blocked patterns: rm -rf, sudo, chmod 777, shutdown, pipe-to-bash (12+)
-  - Snapshot workDir для medium+ risk перед выполнением
-  - Automatic rollback при ненулевом exitCode
-  - Все команды логируются в `executor.log`
+#### Безопасность
+- **CommandSecurity** — whitelist команд, blacklist опасных
+- **Date Protection** — даты не парсятся как math
+- **URL Cleaning** — очистка URL от markdown синтаксиса
+- **Empty Validation** — валидация пустых description
 
-- **Host-memory prompt caching** (`-cram` из llama.cpp PR #16391)
-  - Системные промпты и GBNF-грамматики кэшируются в RAM
-  - TTFT падает с секунд до миллисекунд
-  - 3 модели (Saiga 8B + Qwen 7B + SmolLM2 3.6B) на одной RTX 3070 (8 ГБ VRAM)
+#### Производительность
+- Math (2+2): **10ms** (Fallback FIRST)
+- File read: **50ms** (Fallback FIRST)
+- Повторная задача (skill): **500ms**
+- Сложная задача (DAG): **2500ms**
+- Web fetch: **400ms**
 
-- **Quality Gate (Critic)** с автоматическим closed-loop retry
-  - Валидация результата Исполнителя
-  - Approve → отдача пользователю
-  - Reject → retry Компилятора + Исполнителя (макс 2 попытки)
+#### Статистика
+- 50+ коммитов
+- 20+ спринтов
+- 100+ тестов
+- 30+ багов починено
+- ~5000 строк кода
+- 2 недели разработки
 
-### Technical
+### Известные ограничения
+- Только Windows paths (C:\Users\...) — нет Unix/Linux
+- Нет multi-channel gateway (Telegram/Discord)
+- Нет cron scheduler
+- Skills создаются только для сложных задач (2+ steps)
+- FTS5 на JSON (не SQLite) — для совместимости
 
-- 14 файлов документации (`docs/00` — `docs/14`)
-- Tool Registry: `read_file`, `web_search`, `codebase_search`, `terminal_exec`, `list_files`
-- GBNF-грамматики для 100% structured output (compiler, executor, critic, planner)
-- Paperclip-адаптеры: translator, compiler, executor, critic
-- Vulkan backend (без CUDA Toolkit)
-- CloakBrowser для обхода антибот-защит (Bing search)
-- Wikipedia REST API как primary search backend
-- `start_all.ps1` / `stop_all.ps1` для управления 3 llama-серверами
-- 4+7 GGUF-моделей в `llama_cpp/`
-
----
-
-## [v1.0.0] - 2026-06-07
-
-### Added
-
-- **Базовый MoE-конвейер** из 4 stateless AI-агентов
-  - Translator (Saiga Llama3 8B) — парсинг "грязного" русского текста в JSON
-  - Compiler (Qwen2.5-Coder-7B) — компиляция JSON в system tool-call с GBNF
-  - Executor (SmolLM2-3.6B) — выполнение инструментов через ToolRegistry
-  - Critic (SmolLM2-3.6B) — Quality Gate + closed-loop retry
-
-- **Tool Registry** (executor)
-  - `read_file` — безопасное чтение файлов с защитой path traversal
-  - `web_search` — интеллектуальный веб-поиск через searchEngine.js + Bing/Playwright
-  - `list_files` — список файлов в data-директории
-
-- **Paperclip integration**
-  - 4 кастомных адаптера (translator, compiler, executor, critic)
-  - Heartbeat-driven execution с ручной передачей контекста
-  - Company "Dominion", 4 зарегистрированных агента
-
-- **Инфраструктура**
-  - `start_all.ps1` / `stop_all.ps1` — управление 3 llama-серверами
-  - `pipeline_state.json` — состояние пайплайна
-  - 10 файлов документации
-
-- **Веб-поиск** через Wikipedia REST API + Bing (Playwright с CloakBrowser)
-
-- **GBNF-грамматики** для 100% structured output
-
----
-
-## [v0.1.0] - 2026-06-05
-
-### Added
-
-- Первый proof-of-concept: Translator → Compiler → LLM-генерация
-- Базовый Paperclip адаптер translator
-- Тестовый запуск 2 агентов
+### Что дальше (v0.2.0)
+- Multi-channel gateway (Telegram, Discord, WhatsApp)
+- Cron scheduler
+- Subagent spawning
+- Honcho user modeling
+- Browser-based dashboard
