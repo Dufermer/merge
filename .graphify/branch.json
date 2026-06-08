@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "branchName": "master",
+  "worktreePath": "C:\\Users\\rus\\Desktop\\merge",
+  "upstream": "origin/master",
+  "mergeBase": "af793937e6813cd0a1bb5442614d08a350c97acb",
+  "firstSeenHead": "55e3eff7b732127d042d0b57bf4d63542b207169",
+  "lastSeenHead": "55e3eff7b732127d042d0b57bf4d63542b207169",
+  "lastAnalyzedHead": "55e3eff7b732127d042d0b57bf4d63542b207169",
+  "stale": false,
+  "staleReason": null,
+  "staleSince": null,
+  "lifecycleEvent": null,
+  "createdAt": "2026-06-08T05:40:33.569Z",
+  "updatedAt": "2026-06-08T05:40:33.569Z"
+}

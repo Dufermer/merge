@@ -12,5 +12,6 @@
 - start_all.ps1
 
 ## Recent Changes
-- 2026-06-08: proanalizirui modeli v proekte
+- 2026-06-08: ������� ����� 2+2
+
 

@@ -190,6 +190,7 @@ powershell -ExecutionPolicy Bypass -File start_all.ps1
 | Файл | О чем |
 |------|-------|
 | [`23_ceo_comprehensive.md`](docs/23_ceo_comprehensive.md) | **CEO Agent — главный документ** |
+| [`24_graphify_integration.md`](docs/24_graphify_integration.md) | Graphify — knowledge graph интеграция |
 | [`00_OVERVIEW.md`](docs/00_OVERVIEW.md) | Общая архитектура с CEO |
 | [`17_ceo_agent.md`](docs/17_ceo_agent.md) | CEO Agent — базовое описание |
 | [`18_self_learning_skills.md`](docs/18_self_learning_skills.md) | Self-learning skills |
@@ -214,6 +215,7 @@ powershell -ExecutionPolicy Bypass -File start_all.ps1
 | **GBNF-грамматики** | 100% structured output |
 | **Paperclip** | Оркестратор AI-агентов |
 | **@xenova/transformers** | Embeddings для vector search |
+| **Graphify** | Knowledge graph — анализ архитектуры кода |
 
 ---
 

@@ -89,6 +89,7 @@
 | `20_error_recovery.md` | Error Recovery Patterns |
 | `21_multi_strategy.md` | Multi-Strategy Planning |
 | `22_project_context.md` | Project Context |
+| `24_graphify_integration.md` | Graphify — knowledge graph |
 | `01`-`16` | Остальные модули |
 
 ## Что работает прямо сейчас
@@ -101,6 +102,7 @@
 - ✅ **Git-First:** auto-commit после code_patch
 - ✅ **Project Context:** автообновляемый PROJECT_CONTEXT.md
 - ✅ **Conversation history:** последние 10 сообщений
+- ✅ **Graphify:** knowledge graph — анализ архитектуры через AST-граф
 
 ### Специалисты (делегирование)
 - ✅ Translator: парсинг русскоязычных команд в JSON-контракт

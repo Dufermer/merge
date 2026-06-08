@@ -1,0 +1,4 @@
+node_modules/
+.git/
+.graphify/graph.json
+.graphify/graph_cache/

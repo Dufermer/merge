@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@sentropic/graphify": "^0.10.0"
+  }
+}

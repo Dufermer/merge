@@ -1,0 +1,154 @@
+{
+  "C:\\Users\\rus\\Desktop\\merge\\ceoAgent.js": {
+    "mtime": 1780894851733.9624,
+    "hash": "11518251639373ea5701bd75b1bb540a"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\dagOrchestrator.js": {
+    "mtime": 1780890842361.41,
+    "hash": "1d11b442289bb8601b804e686b07710c"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\data\\auth_module.js": {
+    "mtime": 1780890842381.4084,
+    "hash": "bd96cbb8367b75ff4139c89997b04f2e"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\data\\vulnerable_function.js": {
+    "mtime": 1780891896484.7507,
+    "hash": "20cb5f827ccef69a6fb02a0ff5adfdb1"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\install.ps1": {
+    "mtime": 1780890842424.4128,
+    "hash": "e576ef6a8a9d10133701405970640a4e"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\start_all.ps1": {
+    "mtime": 1780880762756.4822,
+    "hash": "472172cb189be761d6e78612089c0137"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\stop_all.ps1": {
+    "mtime": 1780880786928.903,
+    "hash": "0a4f33c4ec62475a83932a74ba6bde18"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\CHANGELOG.md": {
+    "mtime": 1780890842423.4128,
+    "hash": "a485055bb772c9a3759d2292d126307e"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\INSTALL.md": {
+    "mtime": 1780890842445.2212,
+    "hash": "3079c8bb6112fd5901064d5a08e992ae"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\PROJECT_CONTEXT.md": {
+    "mtime": 1780897026180.8176,
+    "hash": "d4bdf3732961dd0e8328f3b56e1b1b1b"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\README.md": {
+    "mtime": 1780895634507.6648,
+    "hash": "6a442f93410a035c4ab71d9d0c8e5daf"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\data\\git_test_file.txt": {
+    "mtime": 1780894461270.7136,
+    "hash": "8cd09bb48afb1d0c757451c178daf4c6"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\data\\test_file.txt": {
+    "mtime": 1780890842401.4094,
+    "hash": "84b8bc6ddfb8c2032ae2eb44d162369b"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\diagnostic_report_full.md": {
+    "mtime": 1780897092329.2656,
+    "hash": "85eb5ad18fe08703229662bf4f5c40e9"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\00_OVERVIEW.md": {
+    "mtime": 1780895137253.0115,
+    "hash": "4373fdbded133a70ca96c5afebe2f47d"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\01_llama_cpp_setup.md": {
+    "mtime": 1780879535845.231,
+    "hash": "b79539223970f4c10cf24e7e5272ca1e"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\02_model_translator.md": {
+    "mtime": 1780879549500.2014,
+    "hash": "bcb29ab5ebb89830c408ed2d4605303f"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\03_paperclip_translator.md": {
+    "mtime": 1780879572559.8848,
+    "hash": "596d866d3cb138b257f35ab4632288f8"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\04_model_compiler.md": {
+    "mtime": 1780880218587.5159,
+    "hash": "17a67995425d26ed170f88770156e674"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\05_paperclip_compiler.md": {
+    "mtime": 1780880241094.789,
+    "hash": "90ecf3ee9635f57a3f34b20521f2d27d"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\06_full_system_run.md": {
+    "mtime": 1780890842362.4087,
+    "hash": "f77a485c88595693b7f54a08d8c723f2"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\07_model_executor.md": {
+    "mtime": 1780881624149.4292,
+    "hash": "1496a4dc88e1861b12103c27d17b873b"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\08_paperclip_executor.md": {
+    "mtime": 1780891917875.4778,
+    "hash": "03798a1df2bff7d2ffbbe79406e7b817"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\09_model_critic.md": {
+    "mtime": 1780885349315.3203,
+    "hash": "77b3216a29dd12187ac3c2ad01c91373"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\10_paperclip_critic.md": {
+    "mtime": 1780885349354.4138,
+    "hash": "b64d2bd94afbfa28f9aabf56a1928511"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\11_task_decomposer.md": {
+    "mtime": 1780890842362.4087,
+    "hash": "8df930d05b3d3a347edf709a42b750e9"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\12_dag_orchestrator.md": {
+    "mtime": 1780890842363.4082,
+    "hash": "dada7a81198decf9f6e5035d275a2b27"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\13_codebase_analyzer.md": {
+    "mtime": 1780890842383.4092,
+    "hash": "a47f32da05fcb3f4c0a5e253dbf487bb"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\14_terminal_executor.md": {
+    "mtime": 1780890842402.4087,
+    "hash": "4b754c19a39114ea02d602885e132165"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\15_code_patcher.md": {
+    "mtime": 1780891470072.0837,
+    "hash": "f0f2de19d7bd9d608e5d35d5488b285c"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\16_database_executor.md": {
+    "mtime": 1780892569169.2083,
+    "hash": "d63c9a50e7b58cbf079b078e4b348d6a"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\17_ceo_agent.md": {
+    "mtime": 1780893522233.5925,
+    "hash": "0e6356ff1e13b80b89e0a8e4df509d4a"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\18_self_learning_skills.md": {
+    "mtime": 1780893241719.6475,
+    "hash": "efb06cc618a01ee7089d2a428f843225"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\19_git_first.md": {
+    "mtime": 1780894477485.4697,
+    "hash": "4c896db9e374aa3affdaa7e0d37634c6"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\20_error_recovery.md": {
+    "mtime": 1780894477485.4697,
+    "hash": "4f953d6f8f8910332912ff40d85fb64d"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\21_multi_strategy.md": {
+    "mtime": 1780894922966.6797,
+    "hash": "a3edd1554664cfb29d264b6f05f97606"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\22_project_context.md": {
+    "mtime": 1780894922966.6797,
+    "hash": "1e408e60d64b6a47beba975f1792ea8b"
+  },
+  "C:\\Users\\rus\\Desktop\\merge\\docs\\23_ceo_comprehensive.md": {
+    "mtime": 1780895099991.9727,
+    "hash": "0f6f040a12ef4f0de5f55875b9911f1c"
+  }
+}
