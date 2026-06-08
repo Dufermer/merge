@@ -9,9 +9,12 @@
 
 const http = require("node:http");
 const https = require("node:https");
-const fs = require("node:fs");
 const path = require("node:path");
+const fs = require("node:fs");
+const { execSync } = require("node:child_process");
+const { CommandSecurity } = require("./commandSecurity");
 
+const security = new CommandSecurity();
 const LLAMA_ENDPOINT = "http://127.0.0.1:8083/v1/chat/completions";
 const MAX_TURNS = 150;
 const LOG_FILE = path.join(__dirname, "data", "agent_loop.log");
@@ -87,6 +90,27 @@ const TOOL_REGISTRY = {
     description: "Search for code in the project. Params: { query: string }",
     execute: async (params) => {
       return { error: "Codebase search not available in standalone mode" };
+    },
+  },
+
+  terminal_exec: {
+    description: "Run a shell command. Params: { command: string }. Returns stdout. Only safe commands allowed.",
+    execute: async (params) => {
+      try {
+        const command = params.command || "";
+        if (!command) return { error: "No command provided" };
+
+        const validation = security.validate(command);
+        if (!validation.allowed) {
+          return { error: `Command blocked: ${validation.reason}` };
+        }
+
+        const output = execSync(command, { timeout: 10000, encoding: "utf-8", shell: true });
+        return { data: output.trim(), format: "text" };
+      } catch (e) {
+        if (e.stderr) return { error: e.stderr.toString().trim() };
+        return { error: `Command failed: ${e.message}` };
+      }
     },
   },
 };
@@ -354,7 +378,8 @@ function buildFallbackDecision(task, context) {
 
   // List directory / count files
   if (taskLower.includes("list") || taskLower.includes("список") || taskLower.includes("директори") || 
-      taskLower.includes("сколько файлов") || taskLower.includes("сколько папок") || taskLower.includes("файлов в")) {
+      taskLower.includes("сколько файлов") || taskLower.includes("сколько папок") || taskLower.includes("файлов в") ||
+      taskLower.includes("файлов на")) {
     // Extract directory path from task
     let dir = ".";
     const dirMatch = task.match(/в\s+(?:директори(?:и|ю)?\s+)?([\w.\/\\-]+)/i) || 
@@ -363,9 +388,28 @@ function buildFallbackDecision(task, context) {
       const raw = dirMatch[1];
       dir = raw.includes(":") ? raw : `C:\\Users\\rus\\Desktop\\merge\\${raw}`;
     } else if (taskLower.includes("рабочем столе") || taskLower.includes("desktop")) {
-      dir = "C:\\Users\\rus\\Desktop";
+      // Use terminal for desktop (Windows paths with spaces)
+      return { thought: "Counting desktop files via terminal", tool: "terminal_exec", params: { command: "powershell -Command \"$d=[Environment]::GetFolderPath('Desktop'); $c=(Get-ChildItem $d).Count; Write-Host \\\"На рабочем столе $c файлов и папок\\\"\"" }, done: false };
     }
     return { thought: `Counting files in ${dir}`, tool: "list_files", params: { dir }, done: false };
+  }
+
+  // Terminal commands
+  if (taskLower.includes("дата") || taskLower.includes("время") || taskLower.includes("date") || taskLower.includes("time") || taskLower.includes("час")) {
+    return { thought: "Getting current date/time", tool: "terminal_exec", params: { command: "date /T && time /T" }, done: false };
+  }
+
+  if (taskLower.includes("hostname") || (taskLower.includes("компьютер") && !taskLower.includes("перезагруз")) || (taskLower.includes("кто") && taskLower.includes("я"))) {
+    const cmd = "echo %COMPUTERNAME% && whoami";
+    return { thought: "Getting hostname and user", tool: "terminal_exec", params: { command: cmd }, done: false };
+  }
+
+  if (taskLower.includes("ip") || taskLower.includes("адрес") || taskLower.includes("ipconfig")) {
+    return { thought: "Getting IP address", tool: "terminal_exec", params: { command: "ipconfig" }, done: false };
+  }
+
+  if (taskLower.includes(".json") && (taskLower.includes("найди") || taskLower.includes("поиск") || taskLower.includes("все") || taskLower.includes("find"))) {
+    return { thought: "Searching for JSON files", tool: "terminal_exec", params: { command: "dir /s /b *.json" }, done: false };
   }
 
   return { thought: "Unknown task type", tool: null, params: {}, done: true, error: "Unknown task type" };
