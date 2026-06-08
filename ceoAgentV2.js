@@ -193,7 +193,21 @@ async function processTask(task, options = {}) {
   log(`[CEOv2] Starting agent loop...`);
   const result = await runAgentLoop(task, options);
   const elapsed = Date.now() - startTime;
-  memory.store(task, result.answer);
+  
+  // Не сохраняем в память ошибки
+  const isError = result.answer && (
+    result.answer.includes("Error") || 
+    result.answer.includes("error") ||
+    result.answer.includes("ENOENT") ||
+    result.answer.includes("not found")
+  );
+  
+  if (!isError) {
+    memory.store(task, result.answer);
+    log(`[CEOv2] Saved to memory`);
+  } else {
+    log(`[CEOv2] NOT saving error to memory`);
+  }
 
   return {
     answer: result.answer,
