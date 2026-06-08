@@ -173,8 +173,9 @@ async function updateIssueStatus(issueId, status, resultJson) {
 async function processTask(task, options = {}) {
   const startTime = Date.now();
 
-  // Check memory first
-  const memResults = memory.search(task);
+  // Check memory first (skip for URL queries — use web_fetch instead)
+  const hasUrl = /https?:\/\/[^\s]+/.test(task);
+  const memResults = !hasUrl ? memory.search(task) : [];
   if (memResults.length > 0 && memResults[0].similarity >= 0.9) {
     log(`[CEOv2] Memory hit! (sim=${memResults[0].similarity})`);
     return {

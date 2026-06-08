@@ -113,6 +113,42 @@ const TOOL_REGISTRY = {
       }
     },
   },
+
+  web_fetch: {
+    description: "Fetch and analyze a web page or GitHub repository. Params: { url: string }",
+    execute: async (params) => {
+      try {
+        const url = params.url || "";
+        if (!url) return { error: "No URL provided" };
+        try { new URL(url); } catch { return { error: `Invalid URL: ${url}` }; }
+
+        const { execSync } = require("node:child_process");
+
+        // For GitHub repos, use API for README
+        if (url.includes("github.com")) {
+          const repoMatch = url.match(/github\.com\/([^\/]+)\/([^\/\?#]+)/);
+          if (repoMatch) {
+            const apiUrl = `https://api.github.com/repos/${repoMatch[1]}/${repoMatch[2]}/readme`;
+            const out = execSync(`curl -sL -H "Accept: application/vnd.github.v3+json" "${apiUrl}"`, { timeout: 15000 });
+            const data = JSON.parse(out.toString());
+            if (data.content) {
+              const content = Buffer.from(data.content, "base64").toString("utf8");
+              const trimmed = content.length > 10000 ? content.slice(0, 10000) + "\n\n[...truncated...]" : content;
+              return { data: trimmed, format: "text", source: "github_api", url };
+            }
+          }
+        }
+
+        // Generic web fetch via curl
+        const out = execSync(`curl -sL --max-time 20 "${url}"`, { timeout: 30000, maxBuffer: 10 * 1024 * 1024 });
+        const text = out.toString();
+        const trimmed = text.length > 10000 ? text.slice(0, 10000) + "\n\n[...truncated...]" : text;
+        return { data: trimmed, format: "text", source: "curl", url, fullLength: text.length };
+      } catch (e) {
+        return { error: `Web fetch error: ${e.message}` };
+      }
+    },
+  },
 };
 
 // ═══════════════════════════════════════════
@@ -330,8 +366,15 @@ function buildFallbackDecision(task, context) {
     return { thought: "Task completed based on previous result", tool: null, params: {}, done: true };
   }
 
+  // URL detection — must be checked FIRST
+  const urlMatch = task.match(/https?:\/\/[^\s]+/);
+  if (urlMatch) {
+    const url = urlMatch[0];
+    return { thought: `Fetching URL: ${url}`, tool: "web_fetch", params: { url }, done: false };
+  }
+
   // Math detection
-  const mathExpr = taskLower.match(/(\d+\s*[\+\-\*\/]\s*\d+(?:\s*[\+\-\*\/]\s*\d+)*)/);
+  const mathExpr = taskLower.match(/(\d+\s*[\+\-\*\/\(\)]\s*\d+[\s\d]*[\+\-\*\/\(\)\s\d]*)/);
   if (mathExpr) {
     return {
       thought: `Computing: ${mathExpr[1]}`,
