@@ -114,7 +114,8 @@
 | **GBNF-грамматики** | 100% structured output — JSON задаётся BNF-грамматикой, модель не может отклониться |
 | **Paperclip** | Оркестратор AI-агентов (heartbeat, resultJson, адаптеры) |
 | **TaskPlanner** | Декомпозиция составных задач в DAG-граф подзадач |
-| **DAG Orchestrator** | Параллельное исполнение графа (concurrency ≤ 2) с retry на каждую ноду |
+| **Codebase Analyzer** | AST-индекс и семантический поиск по коду |
+| **Code Patcher** | Генерация и применение патчей к коду через LLM с Babel-валидацией и rollback |
 | **Terminal Executor** | Безопасное выполнение shell-команд с whitelist, sandbox и snapshot/rollback |
 | **Puppeteer Stealth** | Обход антибот-защит при веб-поиске (Bing) |
 | **Wikipedia REST API** | Основной источник веб-данных (структурированные статьи) |
@@ -164,7 +165,7 @@ merge/
 │   ├── qwen2.5-coder-7b-instruct-q4_k_m.gguf  # Модель Компилятора (~4.7 GB)
 │   └── smollm2-3.6b-instruct-q4_k_m.gguf      # Модель Исполнителя/Критика (~2.5 GB)
 │
-├── docs/                              # 📚 Полная документация (14 файлов)
+├── docs/                              # 📚 Полная документация (15 файлов)
 │   ├── 00_OVERVIEW.md                 #   Общая карта системы
 │   ├── 01_llama_cpp_setup.md          #   Установка llama.cpp
 │   ├── 02_model_translator.md         #   Спецификация Переводчика
@@ -179,7 +180,8 @@ merge/
 │   ├── 11_task_decomposer.md          #   Декомпозиция задач в DAG
 │   ├── 12_dag_orchestrator.md         #   Графовая оркестрация
 │   ├── 13_codebase_analyzer.md        #   AST-индекс и семантический поиск по коду
-│   └── 14_terminal_executor.md       #   Безопасное выполнение shell-команд
+│   ├── 14_terminal_executor.md       #   Безопасное выполнение shell-команд
+│   └── 15_code_patcher.md           #   Генерация и применение патчей
 │
 ├── data/                              # 📁 Данные для инструментов
 │   └── pipeline_state.json            #   Состояние пайплайна (для Critic)
@@ -196,10 +198,12 @@ merge/
     ├── compiler/                      # 📦 Адаптер Компилятора (index.js + compiler.gbnf)
     │   └── index.js
     │   └── compiler.gbnf
-    ├── executor/                      # 📦 Адаптер Исполнителя (index.js + searchEngine.js + executor.gbnf + codebaseAnalyzer.js + snapshots/)
+    ├── executor/                      # 📦 Адаптер Исполнителя (index.js + searchEngine.js + executor.gbnf + codebaseAnalyzer.js + codePatcher.js + snapshots/)
     │   ├── index.js
     │   ├── searchEngine.js
     │   ├── codebaseAnalyzer.js
+    │   ├── codePatcher.js
+    │   ├── codePatch.gbnf
     │   ├── executor.gbnf
     │   ├── executor.log
     │   └── snapshots/
@@ -229,6 +233,7 @@ merge/
 | [`12_dag_orchestrator.md`](docs/12_dag_orchestrator.md) | Графовая оркестрация, топологическая сортировка, retry нод |
 | [`13_codebase_analyzer.md`](docs/13_codebase_analyzer.md) | AST-индекс, семантический поиск по коду, Babel-парсер |
 | [`14_terminal_executor.md`](docs/14_terminal_executor.md) | Безопасное выполнение shell-команд, whitelist, snapshot/rollback |
+| [`15_code_patcher.md`](docs/15_code_patcher.md) | Генерация и применение патчей к коду через LLM с валидацией |
 
 ---
 
