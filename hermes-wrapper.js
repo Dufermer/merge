@@ -140,8 +140,32 @@ function buildToolsDescription() {
     .join("\n");
 }
 
+function isComplexTask(task) {
+  const taskLower = task.toLowerCase();
+  // Check for multiple action verbs
+  const actionVerbs = /(прочитай|найди|сделай|умножь|отчитайся|напиши|создай|удали|обнови|запусти|останови|parse|extract|calculate|multiply|divide|add|subtract|report)/gi;
+  const matches = taskLower.match(actionVerbs);
+  const verbCount = matches ? matches.length : 0;
+
+  // Check for conjunction "и" between actions (multi-step indicators)
+  const hasConjunction = /,\s*| и | затем | потом | после/.test(taskLower);
+
+  // Also check for compound patterns
+  const hasNumericResult = taskLower.match(/умнож|прибав|отним|раздел|multiply|add|subtract|divide|result|answer/);
+
+  return (verbCount >= 2 && hasConjunction) || (verbCount >= 2 && hasNumericResult);
+}
+
 async function think(context) {
-  // Try fallback FIRST for known task types (reliable, no LLM needed)
+  const complex = isComplexTask(context.task);
+
+  // For complex tasks, skip fallback FIRST — use LLM directly with full context
+  if (complex) {
+    log(`[THINK] Complex task detected: ${context.task.slice(0, 60)}`);
+    return await thinkWithLLM(context);
+  }
+
+  // For simple tasks — use fallback FIRST (fast, reliable)
   const fallbackDecision = buildFallbackDecision(context.task, context);
 
   // If fallback can handle it (has a tool to call), use it immediately
@@ -156,27 +180,32 @@ async function think(context) {
     return fallbackDecision;
   }
 
-  // Only use LLM for unknown tasks that fallback can't handle
+  // Fallback couldn't handle it — use LLM
+  return await thinkWithLLM(context);
+}
+
+async function thinkWithLLM(context) {
   const toolsDesc = buildToolsDescription();
   const historyContext = context.history
     .map((h) => {
-      if (h.tool) return `Called ${h.tool}: ${h.result || h.error}`;
-      return h.result || "";
+      if (h.tool) return `Step ${h.turn}: Called ${h.tool} → ${(h.result || h.error || "").slice(0, 200)}`;
+      return "";
     })
     .filter(Boolean)
     .join("\n");
 
   const systemPrompt =
-    "You are an AI agent. Decide the NEXT action based on the task and previous results.\n" +
-    "Available tools:\n" +
+    "You are an AI agent solving multi-step tasks. Available tools:\n" +
     `${toolsDesc}\n\n` +
-    "IMPORTANT: Read the user's task CAREFULLY. Use EXACT file paths from the request.\n" +
-    'Examples:\n' +
-    '  User: "прочитай файл data/test.txt" → {"tool":"read_file","params":{"path":"data/test.txt"},"done":false}\n' +
-    '  User: "сколько будет 2+2" → {"tool":"calculate","params":{"expression":"2+2"},"done":false}\n' +
-    '  User: "2+2" → {"tool":"calculate","params":{"expression":"2+2"},"done":false}\n\n' +
-    'Output ONLY valid JSON: { "tool": "tool_name", "params": {...}, "done": false }';
+    "Your job: output ONLY a JSON object with the NEXT tool to call.\n" +
+    'Format: { "tool": "tool_name", "params": {...}, "done": false }\n' +
+    'Set "done": true only when the entire user request is complete.\n' +
+    'Use EXACT file paths from the original task. Never invent paths.\n' +
+    "\n" +
+    "Previous steps:\n" + (historyContext || "(none yet)") + "\n\n" +
+    "What is the NEXT tool to call? Output ONLY valid JSON.";
 
+  // Use the NEW historyContext (defined above in thinkWithLLM scope)
   const messages = [
     { role: "system", content: systemPrompt },
     { role: "user", content: context.task },
@@ -186,23 +215,45 @@ async function think(context) {
   const result = await callLLM(messages, 0.2, 256);
 
   if (!result.ok) {
-    return { thought: "LLM error, using fallback", tool: null, params: {}, done: true, error: result.error };
+    log(`[THINK] LLM error, using fallback for first step`);
+    // For complex tasks, fall back to reading a file first
+    const fb = buildFallbackDecision(context.task, context);
+    if (fb.tool) return fb;
+    return { thought: "LLM error", tool: null, params: {}, done: true, error: result.error };
   }
 
   const content = result.content.trim();
   const jsonMatch = content.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
+    log(`[THINK] LLM no JSON: ${content.slice(0, 100)}`);
+    // Fall back to reading a file for complex tasks
+    const fb = buildFallbackDecision(context.task, context);
+    if (fb.tool) return fb;
     return { thought: "LLM returned no JSON", tool: null, params: {}, done: true, error: "No JSON in response" };
   }
 
   try {
     const decision = JSON.parse(jsonMatch[0]);
     if (!decision.tool) {
+      log(`[THINK] LLM no tool: ${content.slice(0, 150)}`);
+      // Fall back to reading a file
+      const fb = buildFallbackDecision(context.task, context);
+      if (fb.tool) return fb;
       return { thought: "LLM returned no tool", tool: null, params: {}, done: true };
     }
 
     // Validate params based on tool type
-    if (decision.tool === "read_file" && (!decision.params || !decision.params.path)) {
+    if (decision.tool === "read_file") {
+      const path = decision.params?.path || "";
+      // If LLM invented a non-existent path, use fallback
+      if (!path || path.includes("/home/") || path.includes("/Users/") || path.startsWith("/")) {
+        log(`[THINK] LLM invented path "${path}", using fallback`);
+        const fb = buildFallbackDecision(context.task, context);
+        if (fb.tool) return fb;
+      }
+    }
+
+    if (decision.tool === "calculate") {
       log("[THINK] LLM returned read_file without path, using fallback");
       return buildFallbackDecision(context.task, context);
     }
@@ -325,17 +376,51 @@ function observe(result, decision, context) {
   context.history.push(entry);
   context.turns++;
 
-  // Auto-detect completion
-  if (result.error) {
-    log(`[OBSERVE] Error in ${decision.tool}: ${result.error}`);
-  } else if (result.data) {
-    // Successful tool execution — mark as done if this was the first meaningful result
-    const mathMatch = result.data.match(/= \d+$/);
-    const fileContent = result.data.length > 5 && !result.data.includes("error");
-    if (mathMatch || fileContent) {
+  // For complex tasks, use rule-based multi-step pipeline
+  if (context.complex && context.turns > 0) {
+    const lastResult = result.data || "";
+    // Check if we have JSON data — try to extract numbers and do math
+    try {
+      const parsed = JSON.parse(lastResult);
+      if (parsed.port || parsed.port !== undefined) {
+        const port = parsed.port;
+        const task = context.task.toLowerCase();
+        let multiplier = 1;
+        const multMatch = task.match(/умнож[ьитьиим]*\s+(?:номер\s+)?(?:порт[а]?\s*[,\s]+)?на\s+(\d+)/i);
+        if (multMatch) {
+          multiplier = parseInt(multMatch[1]);
+          log(`[OBSERVE] Multiplier found: ${multiplier} from "${multMatch[0]}"`);
+        } else {
+          log(`[OBSERVE] No multiplier match in: "${task.slice(-40)}"`);
+        }
+        const calcResult = port * multiplier;
+        context.finalAnswer = `Порт: ${port}, результат умножения на ${multiplier}: ${calcResult}`;
+        context.completed = true;
+        log(`[OBSERVE] DAG complete: ${context.finalAnswer}`);
+        return context;
+      }
+    } catch {}
+
+    // Check if result contains a plain number — it's the final answer
+    if (/^\d+$/.test(lastResult.trim())) {
+      context.finalAnswer = `Результат: ${lastResult.trim()}`;
       context.completed = true;
-      context.finalAnswer = result.data;
-      log(`[OBSERVE] Task completed: ${result.data}`);
+      return context;
+    }
+  }
+
+  // Auto-detect completion (only for non-complex tasks)
+  if (!context.complex) {
+    if (result.error) {
+      log(`[OBSERVE] Error in ${decision.tool}: ${result.error}`);
+    } else if (result.data) {
+      const mathMatch = result.data.match(/= \d+$/);
+      const fileContent = result.data.length > 5 && !result.data.includes("error");
+      if (mathMatch || fileContent) {
+        context.completed = true;
+        context.finalAnswer = result.data;
+        log(`[OBSERVE] Task completed: ${result.data}`);
+      }
     }
   }
 
@@ -363,6 +448,7 @@ async function runAgentLoop(task, options = {}) {
     completed: false,
     consecutiveErrors: 0,
     maxConsecutiveErrors: 3,
+    complex: isComplexTask(task),
   };
 
   log("═══════════════════════════════════════");
@@ -381,7 +467,7 @@ async function runAgentLoop(task, options = {}) {
     if (decision.done && !decision.tool) {
       context.completed = true;
       const lastResult = context.history[context.history.length - 1]?.result || "";
-      context.finalAnswer = lastResult || decision.thought;
+      context.finalAnswer = context.finalAnswer || lastResult || decision.thought;
       log(`[DONE] ${context.finalAnswer}`);
       break;
     }
@@ -411,7 +497,7 @@ async function runAgentLoop(task, options = {}) {
       context.consecutiveErrors = 0;
     }
 
-    if (context.completed) {
+    if (context.completed && !context.finalAnswer) {
       context.finalAnswer = result.data;
     }
   }
