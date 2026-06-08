@@ -1,0 +1,71 @@
+{
+  "total": 200,
+  "done": 117,
+  "blocked": 70,
+  "cancelled": 9,
+  "todo": 4,
+  "success_rate": 58.5,
+  "patterns": [
+    {
+      "pattern": "other",
+      "count": 32,
+      "examples": [
+        "critic",
+        "{\"pipeline_state\":\"pipeline_state.json\",\"task\":\"critic\"}",
+        "{\"tool_name\": \"backup\", \"strict_params\": {\"full\": true, \"target\": \"database\", \"before_release\": true}, \"system_command\": \"Backup the database before release\"}"
+      ]
+    },
+    {
+      "pattern": "file_read",
+      "count": 19,
+      "examples": [
+        "прочитай файл data/test.txt",
+        "прочитай файл data/test1.txt",
+        "прочитай файл data/test1.txt"
+      ]
+    },
+    {
+      "pattern": "web_fetch",
+      "count": 9,
+      "examples": [
+        "{\"tool_name\":\"read_file\",\"system_command\":\"Read server_config.json and report the port\",\"strict_params\":{\"path\":\"server_config.json\"}}",
+        "прочитай этот репозиторий https://github.com/nousresearch/hermes-agent",
+        "прочитай этот репозиторий https://github.com/nousresearch/hermes-agent"
+      ]
+    },
+    {
+      "pattern": "calculate",
+      "count": 9,
+      "examples": [
+        "{\"tool_name\":\"web_search\",\"system_command\":\"Search USD/RUB exchange rate\",\"strict_params\":{\"query\":\"курс доллара к рублю 2026\"}}",
+        "3-step pipeline final test v2",
+        "3-step pipeline final test"
+      ]
+    },
+    {
+      "pattern": "config_read",
+      "count": 5,
+      "examples": [
+        "{\"tool_name\": \"read_file\", \"system_command\": \"Read server_config.json\", \"strict_params\": {\"path\": \"server_config.json\"}}",
+        "{\"tool_name\":\"read_file\",\"system_command\":\"Read server_config.json\",\"strict_params\":{\"path\":\"server_config.json\"}}",
+        "{\"tool_name\":\"read_file\",\"system_command\":\"Read server_config.json\",\"strict_params\":{\"path\":\"server_config.json\"}}"
+      ]
+    },
+    {
+      "pattern": "code_search",
+      "count": 4,
+      "examples": [
+        "{\"tool_name\":\"web_search\",\"system_command\":\"Search web for Apple founding date\",\"strict_params\":{\"query\":\"Apple founding date April 1 1976\",\"maxIterations\":2,\"minConfidence\":0.5}}",
+        "{\"tool_name\":\"web_search\",\"system_command\":\"Search web for Apple founding date\",\"strict_params\":{\"query\":\"Apple founding date April 1 1976\",\"maxIterations\":2,\"minConfidence\":0.5}}",
+        "{\"tool_name\":\"web_search\",\"system_command\":\"Search the web for the founding date of Apple Inc.\",\"strict_params\":{\"query\":\"Apple founding date April 1 1976\",\"maxIterations\":2,\"minConfidence\":0.5}}"
+      ]
+    },
+    {
+      "pattern": "list_files",
+      "count": 1,
+      "examples": [
+        "сколько файлов на рабочем столе?"
+      ]
+    }
+  ]
+}

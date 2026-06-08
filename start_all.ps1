@@ -143,3 +143,14 @@ Write-Host "══════════════════════�
 
 Write-Host "`nЗапущенные процессы на портах:" -ForegroundColor Gray
 Get-NetTCPConnection -LocalPort 8081,8082,8083,3100 -ErrorAction SilentlyContinue | Format-Table LocalPort, OwningProcess, State -AutoSize
+
+# ── Шаг 7: Запуск Meta-CEO monitoring ──
+Write-Host "[7/7] Запуск Meta-CEO monitoring (каждые 6 часов)..." -ForegroundColor Yellow
+
+$procMeta = Start-Process -FilePath "node.exe" -WindowStyle Hidden -PassThru -ArgumentList @(
+    "`"$HOME\Desktop\merge\metaCeoMonitor.js`""
+)
+Write-Host "  PID: $($procMeta.Id)"
+$procMeta.Id | Out-File -FilePath "$LOG_DIR\pid_meta_ceo.txt" -Encoding ASCII
+
+Write-Host "  ✅ Meta-CEO monitoring запущен — автоматические intervention каждые 6 часов" -ForegroundColor Green

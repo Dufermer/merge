@@ -1,4 +1,4 @@
-// ecosystem.config.js — PM2 config for Hermes heartbeat processes
+// ecosystem.config.js — PM2 config for Hermes heartbeat + Meta-CEO monitoring
 // Автозапуск при старте системы, авторестарт при падении
 
 module.exports = {
@@ -33,6 +33,23 @@ module.exports = {
       log_date_format: "YYYY-MM-DD HH:mm:ss Z",
       error_file: "C:\\Users\\rus\\.pm2\\logs\\paperclip-ceo-error.log",
       out_file: "C:\\Users\\rus\\.pm2\\logs\\paperclip-ceo-out.log",
+      merge_logs: true,
+      env: {
+        NODE_ENV: "production",
+      },
+    },
+    {
+      name: "meta-ceo-monitor",
+      script: "metaCeoMonitor.js",
+      cwd: "C:\\Users\\rus\\Desktop\\merge",
+      watch: false,
+      max_restarts: 100,
+      restart_delay: 5000,
+      min_uptime: 5000,
+      autorestart: true,
+      log_date_format: "YYYY-MM-DD HH:mm:ss Z",
+      error_file: "C:\\Users\\rus\\.pm2\\logs\\meta-ceo-error.log",
+      out_file: "C:\\Users\\rus\\.pm2\\logs\\meta-ceo-out.log",
       merge_logs: true,
       env: {
         NODE_ENV: "production",
