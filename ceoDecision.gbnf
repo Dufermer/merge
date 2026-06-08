@@ -1,0 +1,37 @@
+# GBNF grammar for CEO Agent decisions
+# Forces JSON structure:
+# { action: "answer_directly" | "delegate" | "gather_info",
+#   reason: "...",
+#   dag: [...] (optional),
+#   tools: [...] (optional),
+#   memory_match: {...} (optional) }
+
+root ::= "{" ws
+  "\"action\"" ws ":" ws action_enum ","
+  ws "\"reason\"" ws ":" ws string
+  ws ("\"dag\"" ws ":" ws dag_array "," ws)?
+  ws ("\"tools\"" ws ":" ws tool_array "," ws)?
+  ws "\"plan\"" ws ":" ws string
+  ws "}"
+
+action_enum ::= "\"answer_directly\"" | "\"delegate\"" | "\"gather_info\""
+
+dag_array ::= "[" ws (dag_node ("," ws dag_node)*)? ws "]"
+dag_node ::= "{" ws
+  "\"id\"" ws ":" ws string ","
+  ws "\"action\"" ws ":" ws string ","
+  ws "\"params\"" ws ":" ws object
+  ws "}"
+
+tool_array ::= "[" ws (tool_item ("," ws tool_item)*)? ws "]"
+tool_item ::= "\"codebase_search\"" | "\"read_file\"" | "\"web_search\"" | "\"db_query\""
+
+string ::= "\"" ([^"]*) "\""
+object ::= "{" ws (pair ("," ws pair)*)? ws "}"
+pair  ::= string ws ":" ws value
+value ::= object | array | string | number | boolean | null
+array ::= "[" ws (value ("," ws value)*)? ws "]"
+number ::= "-"? (("0" | [1-9] [0-9]*)) ("." [0-9]+)?
+boolean ::= "true" | "false"
+null   ::= "null"
+ws ::= ([ \t\n\r])*

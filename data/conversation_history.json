@@ -1,0 +1,54 @@
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "kakoi port byl v konfige?",
+      "timestamp": "2026-06-08T04:29:47.674Z"
+    },
+    {
+      "role": "ceo",
+      "content": "The answer is 'The Kakoi port is a configuration setting.'",
+      "timestamp": "2026-06-08T04:29:47.675Z"
+    },
+    {
+      "role": "user",
+      "content": "naidi funktsiyu avtorizatsii v kode",
+      "timestamp": "2026-06-08T04:29:49.378Z"
+    },
+    {
+      "role": "ceo",
+      "content": "The user is asking about the authorisation function in code. The answer is 'naidi funktsiyu avtorizatsii v kode'.",
+      "timestamp": "2026-06-08T04:29:49.379Z"
+    },
+    {
+      "role": "user",
+      "content": "kakoi port v konfige?",
+      "timestamp": "2026-06-08T04:30:17.884Z"
+    },
+    {
+      "role": "ceo",
+      "content": "Обработано: kakoi port v konfige?",
+      "timestamp": "2026-06-08T04:30:17.885Z"
+    },
+    {
+      "role": "user",
+      "content": "naidi auth v kode",
+      "timestamp": "2026-06-08T04:30:17.886Z"
+    },
+    {
+      "role": "ceo",
+      "content": "Обработано: naidi auth v kode",
+      "timestamp": "2026-06-08T04:30:17.886Z"
+    },
+    {
+      "role": "user",
+      "content": "naidi auth v kode",
+      "timestamp": "2026-06-08T04:30:17.887Z"
+    },
+    {
+      "role": "ceo",
+      "content": "Обработано: naidi auth v kode",
+      "timestamp": "2026-06-08T04:30:17.888Z"
+    }
+  ]
+}

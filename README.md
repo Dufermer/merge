@@ -113,6 +113,7 @@
 | **Vulkan backend** | Автоподхват NVIDIA GPU без установки CUDA Toolkit |
 | **GBNF-грамматики** | 100% structured output — JSON задаётся BNF-грамматикой, модель не может отклониться |
 | **Paperclip** | Оркестратор AI-агентов (heartbeat, resultJson, адаптеры) |
+| **CEO Agent** | Диспетчер с долговременной памятью, кэширование повторных запросов |
 | **DAG Orchestrator** | Параллельное исполнение графа (concurrency ≤ 2) с retry на каждую ноду |
 | **Database Executor** | Безопасные SQL-запросы (SQLite/Postgres), авто-бэкап, блокировка DROP/DELETE без WHERE |
 | **Codebase Analyzer** | AST-индекс и семантический поиск по коду |
@@ -159,6 +160,8 @@ merge/
 ├── start_all.ps1                      # Автоматический запуск всей инфраструктуры
 ├── stop_all.ps1                       # Остановка всей инфраструктуры
 ├── dagOrchestrator.js                 # 📦 Графовый оркестратор нод
+├── ceoAgent.js                        # 🧠 CEO диспетчер с памятью
+├── ceoDecision.gbnf                   # 📜 GBNF для решений CEO
 │
 ├── llama_cpp/                         # 🏗 Инференс-сервер и GGUF-модели
 │   ├── llama-server.exe               #   Бинарный файл llama.cpp
@@ -166,7 +169,7 @@ merge/
 │   ├── qwen2.5-coder-7b-instruct-q4_k_m.gguf  # Модель Компилятора (~4.7 GB)
 │   └── smollm2-3.6b-instruct-q4_k_m.gguf      # Модель Исполнителя/Критика (~2.5 GB)
 │
-├── docs/                              # 📚 Полная документация (16 файлов)
+├── docs/                              # 📚 Полная документация (17 файлов)
 │   ├── 00_OVERVIEW.md                 #   Общая карта системы
 │   ├── 01_llama_cpp_setup.md          #   Установка llama.cpp
 │   ├── 02_model_translator.md         #   Спецификация Переводчика
@@ -183,7 +186,8 @@ merge/
 │   ├── 13_codebase_analyzer.md        #   AST-индекс и семантический поиск по коду
 │   ├── 14_terminal_executor.md       #   Безопасное выполнение shell-команд
 │   ├── 15_code_patcher.md           #   Генерация и применение патчей
-│   └── 16_database_executor.md      #   Безопасная работа с БД
+│   ├── 16_database_executor.md      #   Безопасная работа с БД
+│   └── 17_ceo_agent.md             #   CEO диспетчер с памятью
 │
 ├── data/                              # 📁 Данные для инструментов
 │   └── pipeline_state.json            #   Состояние пайплайна (для Critic)
@@ -200,16 +204,20 @@ merge/
     ├── compiler/                      # 📦 Адаптер Компилятора (index.js + compiler.gbnf)
     │   └── index.js
     │   └── compiler.gbnf
-    ├── executor/                      # 📦 Адаптер Исполнителя (index.js + searchEngine.js + executor.gbnf + codebaseAnalyzer.js + codePatcher.js + databaseExecutor.js + snapshots/)
+    ├── executor/                      # 📦 Адаптер Исполнителя (index.js + searchEngine.js + executor.gbnf + codebaseAnalyzer.js + codePatcher.js + databaseExecutor.js + memoryManager.js + snapshots/)
     │   ├── index.js
     │   ├── searchEngine.js
     │   ├── codebaseAnalyzer.js
     │   ├── codePatcher.js
     │   ├── codePatch.gbnf
     │   ├── databaseExecutor.js
+    │   ├── memoryManager.js
     │   ├── executor.gbnf
     │   ├── executor.log
     │   └── snapshots/
+    ├── ceo/                            # 🧠 Адаптер CEO (память + диспетчеризация)
+    │   ├── index.js
+    │   └── package.json
     └── critic/                        # 📦 Адаптер Критика (index.js + critic.gbnf)
         ├── index.js
         └── critic.gbnf
@@ -238,6 +246,7 @@ merge/
 | [`14_terminal_executor.md`](docs/14_terminal_executor.md) | Безопасное выполнение shell-команд, whitelist, snapshot/rollback |
 | [`15_code_patcher.md`](docs/15_code_patcher.md) | Генерация и применение патчей к коду через LLM с валидацией |
 | [`16_database_executor.md`](docs/16_database_executor.md) | Безопасная работа с SQLite/PostgreSQL, авто-бэкап, блокировка DROP |
+| [`17_ceo_agent.md`](docs/17_ceo_agent.md) | CEO диспетчер с долговременной памятью, conversation history |
 
 ---
 

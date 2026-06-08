@@ -45,7 +45,8 @@ User Input (русский "грязный" текст)
 |-------|------|--------|------|--------|
 | translator | Парсинг русского текста в JSON-контракт | Saiga Llama3 8B (Q4_K_M) | 8081 | ✅ Готов |
 | compiler | Компиляция JSON-контракта в system tool-call | Qwen2.5-Coder-7B-Instruct | 8082 | ✅ Готов |
-| executor | Генерация mock/report, вызов ToolRegistry (read_file, web_search, codebase_search, terminal_exec, code_patch, db_query, list_files) | SmolLM2-3.6B-Instruct | 8083 | ✅ Готов |
+| executor | Генерация mock/report, вызов ToolRegistry (7 инструментов) | SmolLM2-3.6B-Instruct | 8083 | ✅ Готов |
+| ceo | Диспетчер с памятью, поиск в истории, делегирование пайплайна | SmolLM2-3.6B-Instruct | 8083* | ✅ Готов |
 | critic | Quality Gate — валидация + closed-loop retry | SmolLM2-3.6B-Instruct | 8083* | ✅ Готов |
 
 ## Принципы
@@ -76,6 +77,7 @@ User Input (русский "грязный" текст)
 | `14_terminal_executor.md` | Terminal Executor — безопасное выполнение shell-команд |
 | `15_code_patcher.md` | Code Patcher — генерация и применение патчей через LLM |
 | `16_database_executor.md` | Database Executor — безопасная работа с SQLite/PostgreSQL |
+| `17_ceo_agent.md` | CEO Agent & Memory — диспетчер с долговременной памятью |
 
 ## Установка
 
@@ -150,6 +152,7 @@ Executor   → ⚠️ требует запуска :8083 (SmolLM2 не запу
 - ✅ **Safe terminal execution with automatic rollback (terminal_exec tool with whitelist, sandbox, snapshot/rollback)**
 - ✅ **Code Patcher: генерация и применение патчей к коду через LLM с верификацией и rollback (codePatcher.js + code_patch tool)**
 - ✅ **Database Executor: безопасное выполнение SQL-запросов с авто-бэкапом и блокировкой деструктивных операций (databaseExecutor.js + db_query tool)**
+- ✅ **CEO Agent: диспетчер с долговременной памятью — повторные запросы отвечает мгновенно из кэша (ceoAgent.js + memoryManager.js)**
 
 ## Roadmap (следующие шаги)
 
