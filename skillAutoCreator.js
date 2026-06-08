@@ -41,6 +41,39 @@ class SkillAutoCreator {
     return skillId;
   }
 
+  async createSkillFromTrajectory(pattern, trajectory) {
+    const skillId = `skill-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const skillData = {
+      id: skillId,
+      name: pattern,
+      pattern: pattern.replace(/\d+/g, "N").replace(/\b\w+\.\w+\b/g, "FILE").toLowerCase(),
+      trajectory: trajectory.trajectory || [],
+      reasoning: trajectory.reasoning || "",
+      createdAt: Date.now(),
+      successRate: 1.0,
+      usageCount: 0,
+    };
+
+    await fs.promises.mkdir(this.skillsDir, { recursive: true });
+    await fs.promises.writeFile(path.join(this.skillsDir, `${skillId}.json`), JSON.stringify(skillData, null, 2));
+
+    let vectorStore = [];
+    try { vectorStore = JSON.parse(await fs.promises.readFile(this.vectorStorePath, "utf8")); } catch {}
+    vectorStore.push({ id: skillId, content: pattern, pattern: skillData.pattern, name: skillData.name });
+    await fs.promises.writeFile(this.vectorStorePath, JSON.stringify(vectorStore, null, 2));
+
+    return skillId;
+  }
+
+  async getSkillsCount() {
+    try {
+      const files = await fs.promises.readdir(this.skillsDir);
+      return files.filter(f => f.endsWith('.json')).length;
+    } catch {
+      return 0;
+    }
+  }
+
   async findSimilarSkill(userInput) {
     const pattern = userInput.replace(/\d+/g, "N").replace(/\b\w+\.\w+\b/g, "FILE").toLowerCase();
     try {
