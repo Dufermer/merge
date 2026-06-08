@@ -102,14 +102,19 @@ async function processTask(issue) {
   await httpRequest(`${PAPERCLIP_API}/issues/${issueId}`, "PATCH", { status: "in_progress" });
 
   // Step 2: Find the file path from the description
-  const desc = description.toLowerCase();
+  const desc = description;
 
-  // Try to extract path from description (same logic as minimal pipeline)
+  // Try to extract path from description (fix: preserve case, use capture group)
   let filePath = null;
-  const pathMatch = desc.match(/(?:data[\/\\]|файл\s+)?([\w.\/\\-]+(?:\.\w+))/i);
+  const pathMatch = desc.match(/(?:data[\/\\]|файл\s+)?([\w.:\/\\-]+(?:\.\w+))/i);
   if (pathMatch) {
-    const raw = pathMatch[0];
-    filePath = raw.includes(":") ? raw : path.join(PROJECT_ROOT, raw);
+    const raw = (pathMatch[1] || pathMatch[0].replace(/^(?:data[\/\\]|файл\s+)/i, "")).trim();
+    // If absolute Windows path, use as-is; otherwise prepend project root
+    if (/^[A-Za-z]:[\/\\]/.test(raw)) {
+      filePath = raw.replace(/\//g, "\\");
+    } else {
+      filePath = path.join(PROJECT_ROOT, raw);
+    }
   } else {
     filePath = path.join(PROJECT_ROOT, "data", "test.txt");
   }
@@ -197,11 +202,5 @@ async function startup() {
   heartbeatLoop();
 }
 
+// Infinite loop — keep alive via setTimeout (no SIGINT handler needed)
 startup();
-
-// Keep process alive
-process.on("SIGINT", () => {
-  log("[HB] Shutting down...");
-  saveProcessed();
-  process.exit(0);
-});

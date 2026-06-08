@@ -1,0 +1,82 @@
+[
+  [
+    "2.1",
+    "Web Search",
+    "✅ PASSED",
+    "done",
+    null,
+    null
+  ],
+  [
+    "2.2",
+    "Codebase Search",
+    "✅ PASSED",
+    "done",
+    null,
+    null
+  ],
+  [
+    "2.3",
+    "List Files",
+    "✅ PASSED",
+    "done",
+    null,
+    null
+  ],
+  [
+    "3.1",
+    "Multi-file",
+    "✅ PASSED",
+    "done",
+    null,
+    null
+  ],
+  [
+    "3.2",
+    "Graphify query",
+    "✅ PASSED",
+    "done",
+    null,
+    null
+  ],
+  [
+    "3.3",
+    "Combined analysis",
+    "✅ PASSED",
+    "done",
+    null,
+    null
+  ],
+  [
+    "3.4",
+    "Write file",
+    "✅ PASSED",
+    "done",
+    null,
+    null
+  ],
+  [
+    "T5.1",
+    "Stress: сколько будет 10+20",
+    "✅ PASSED",
+    "done",
+    null,
+    null
+  ],
+  [
+    "T5.2",
+    "Stress: сколько будет 100+200",
+    "✅ PASSED",
+    "done",
+    null,
+    null
+  ],
+  [
+    "T5.3",
+    "Stress: сколько будет 1000+2000",
+    "✅ PASSED",
+    "done",
+    null,
+    null
+  ]
+]

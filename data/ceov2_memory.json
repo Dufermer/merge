@@ -1,0 +1,94 @@
+{
+  "entries": [
+    {
+      "task": "������� ����� 2+5?",
+      "result": "2+5 = 7",
+      "timestamp": "2026-06-08T07:15:25.178Z"
+    },
+    {
+      "task": "прочитай файл C:\\Users\nus\\Desktop\\merge\\data\\server_config.json, найди там порт, умножь на 10",
+      "result": "Error after 3 attempts: File read error: ENOENT: no such file or directory, open 'C:\\Users\\rus\\Desktop\\merge\\us\\desktop\\merge\\data\\server_config.json'",
+      "timestamp": "2026-06-08T07:19:18.442Z"
+    },
+    {
+      "task": "прочитай файл C:\\Users\nus\\Desktop\\merge\\data\\server_config.json, найди там порт, умножь номер порта на 10",
+      "result": "Error after 3 attempts: File read error: ENOENT: no such file or directory, open 'C:\\Users\\rus\\Desktop\\merge\\us\\desktop\\merge\\data\\server_config.json'",
+      "timestamp": "2026-06-08T07:23:20.848Z"
+    },
+    {
+      "task": "сколько будет 2+5?",
+      "result": "2+5 = 7",
+      "timestamp": "2026-06-08T07:42:48.063Z"
+    },
+    {
+      "task": "найди в интернете что такое llama.cpp",
+      "result": "Unknown task type",
+      "timestamp": "2026-06-08T07:45:23.639Z"
+    },
+    {
+      "task": "найди функцию которая обрабатывает логин в проекте",
+      "result": "Unknown task type",
+      "timestamp": "2026-06-08T07:45:53.649Z"
+    },
+    {
+      "task": "перечисли все файлы в директории docs/",
+      "result": "Test content for heartbeat\n",
+      "timestamp": "2026-06-08T07:46:23.684Z"
+    },
+    {
+      "task": "прочитай README.md, найди там версию проекта, прочитай STATUS.md и скажи что там написано",
+      "result": "# 🧠 Autonomous Self-Correcting AI Agent System with CEO Orchestrator\r\n\r\n[![llama.cpp](https://img.shields.io/badge/llama.cpp-b5563b?style=flat-square)](https://github.com/ggml-org/llama.cpp)\r\n[![Version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)](CHANGELOG.md)\r\n[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js)](https://nodejs.org)\r\n[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)\r\n\r\n**Локальная, приватная, самообучающаяся система AI-агентов с CEO-оркестратором на базе llama.cpp и Paperclip.**\r\n\r\nСистема работает на потребительском железе (RTX 3070, 8 GB VRAM) без платных API и облаков. **CEO Agent** — главный компонент системы — принимает стратегические решения, делегирует задачи 4 специалистам и учится на опыте. Самообучающаяся, самовосстанавливающаяся, с автоматическими коммитами.\r\n\r\n---\r\n\r\n## 🎯 Ключевые возможности\r\n\r\n### CEO Agent — стратегический оркестратор (ГЛАВНЫЙ КОМПОНЕНТ)\r\n\r\nCEO Agent — это \"мозг\" системы, который содержит **6 киллер-фич**:\r\n\r\n1. **🧠 Семантическая память** — помнит предыдущие задачи (Node.js vector store, 50+ синонимов)\r\n2. **🎯 Self-Learning Skills** — учится на успешных задачах, создаёт рецепты\r\n3. **📊 Multi-Strategy Planning** — генерирует 2-3 плана с автопереключением\r\n4. **🛡 Error Recovery** — база паттернов восстановления (учится на ошибках)\r\n5. **🔧 Git-First** — автоматические git-коммиты после изменений\r\n6. **📋 Project Context** — автообновляемый контекст проекта (экономия 5-10s/сессия)\r\n\r\n### 4 специалиста (делегирование от CEO)\r\n\r\n- **Translator** (Saiga 8B, :8081) — парсит русский язык в JSON-контракты\r\n- **Compiler** (Qwen 7B, :8082) — компилирует JSON в system tool-calls с GBNF\r\n- **Executor** (SmolLM2 3.6B, :8083) — выполняет инструменты через ToolRegistry\r\n- **Critic** (SmolLM2 3.6B, :8083) — Quality Gate, проверяет результат, запускает retry\r\n\r\n---\r\n\r\n## 🏗 Архитектура\r\n\r\n```\r\n[User Request]\r\n     │\r\n     ▼\r\n┌─────────────────────────────────────────────────────────────┐\r\n│                    CEO Agent :8083                           │\r\n│  ──────────────────────────────────────────────────          │\r\n│  Project Context → Memory/Skills → Decision → Execute/Learn │\r\n└─────────────────────────────────────────────────────────────┘\r\n     │\r\n     ├── Direct Answer (from memory, ~50ms)        ← память\r\n     ├── Use Skill (from skills, ~100ms)            ← навыки\r\n     ├── Multi-Strategy (2-3 plans, ~500ms)         ← стратегии\r\n     │\r\n     └── Delegate to Specialists:\r\n            │\r\n            ▼\r\n     ┌────────────────────────────────────────────┐\r\n     │  Translator :8081  (Saiga 8B)              │\r\n     │  → JSON-контракт {intent, target, params}  │\r\n     └────────────────────────────────────────────┘\r\n            │\r\n            ▼\r\n     ┌────────────────────────────────────────────┐\r\n     │  Compiler :8082   (Qwen 7B)                │\r\n     │  → tool-call {tool_name, strict_params}    │\r\n     └────────────────────────────────────────────┘\r\n            │\r\n            ▼\r\n     ┌────────────────────────────────────────────┐\r\n     │  Executor :8083   (SmolLM2 3.6B)           │\r\n     │  → ToolRegistry (7 tools)                  │\r\n     └────────────────────────────────────────────┘\r\n            │\r\n            ▼\r\n     ┌────────────────────────────────────────────┐\r\n     │  Critic :8083    (SmolLM2 3.6B)            │\r\n     │  → Quality Gate: approve / reject + retry  │\r\n     └────────────────────────────────────────────┘\r\n            │\r\n            ▼\r\n     [CEO Aggregates + Git-First + Error Recovery]\r\n```\r\n\r\n**Простой путь:** User → CEO → Translator → Compiler → Executor → Critic → CEO → Result\r\n**Из памяти:** User → CEO → **Direct Answer** (~50ms, без делегирования)\r\n**Из skills:** User → CEO → **Use Skill** (~100ms, готовый DAG из библиотеки)\r\n\r\n---\r\n\r\n## 🧠 CEO Agent — 6 киллер-фич\r\n\r\n### 1. Семантическая память (Node.js Vector Store)\r\n\r\n- **Модель:** all-MiniLM-L6-v2 (384-мерные embeddings, ~90MB)\r\n- **Поиск:** гибридный — keyword (1-5ms) + vector (30-50ms)\r\n- **Синонимы:** 50+ групп (русский + английский)\r\n- **Пример:** \"где обработка логина?\" → находит \"handleLogin\" (semantic similarity 0.92)\r\n- **Без Python:** чистый Node.js через @xenova/transformers\r\n- **Файл:** `memory/vector_store.json`\r\n\r\n### 2. Self-Learning Skills\r\n\r\n- **Создание:** из успешных DAG (автоматически, ≥ 2 нод)\r\n- **Использование:** для похожих задач (без создания DAG с нуля)\r\n- **Эволюция:** new → active → stable (3+ успехов) → canon (5+ успехов)\r\n- **Пример:** \"сделай бэкап\" и \"резервная копия\" используют один skill\r\n- **Файл:** `memory/skills_vector_store.json`\r\n\r\n### 3. Multi-Strategy Planning\r\n\r\n- **Генерация:** 2-3 разных плана через SmolLM2\r\n- **Оценка:** score = (success_rate × 0.5) + ((1 - complexity) × 0.3) + ((1 - risk) × 0.2)\r\n- **Fallback:** автоматическое переключение на backup при провале\r\n- **Пример:** план A (read file) → ошибка FileNotFound → план B (search + read) → успех\r\n- **Файл:** `executor/skills/multiStrategy.js`\r\n\r\n### 4. Error Recovery\r\n\r\n- **База паттернов:** {signature, action, successRate} в error_patterns.json\r\n- **Обучение:** пополняется с каждым инцидентом\r\n- **Actions:** restart_server, increase_timeout, stricter_gbnf, retry_with_different_params\r\n- **Пример:** ECONNREFUSED:8081 → restart_server (98% success rate)\r\n- **Файл:** `memory/error_patterns.json`\r\n\r\n### 5. Git-First\r\n\r\n- **Auto-commit:** после каждого успешного изменения кода\r\n- **Commit messages:** осмысленные (генерируются через SmolLM2)\r\n- **История:** git_history.json (все авто-коммиты)\r\n- **Rollback:** git checkout к любому коммиту\r\n- **Файл:** `executor/skills/gitFirst.js`\r\n\r\n### 6. Project Context\r\n\r\n- **Файл:** PROJECT_CONTEXT.md (автообновляемый)\r\n- **Секции:** Tech Stack, Key Files, Conventions, Recent Changes\r\n- **Экономия:** 5-10 секунд на каждой сессии (CEO не сканирует проект заново)\r\n- **Пример:** \"какие модели?\" → CEO читает контекст → отвечает за ~5ms\r\n- **Файл:** `executor/skills/projectContext.js`\r\n\r\n---\r\n\r\n## 📊 Производительность: с CEO vs без CEO\r\n\r\n| Операция | Без CEO (старая арх.) | С CEO | Ускорение |\r\n|----------|----------------------|-------|-----------|\r\n| Повторный запрос | 3-5 секунд | ~50ms (из памяти) | **60-100x** |\r\n| Похожая задача | 5-10 секунд | ~100ms (skill) | **50-100x** |\r\n| Ошибка сервера | Ручной перезапуск | Авто (паттерн) | **∞** |\r\n| Изменение кода | Без коммита | Auto-commit | **Safety** |\r\n| Сложная задача | 1 план | 2-3 плана + fallback | **Resilience** |\r\n| Новая сессия | Сканирование (5-10s) | Контекст (~5ms) | **1000x** |\r\n\r\n---\r\n\r\n## 🔧 Production Features\r\n\r\n- ✅ **Git-First** — автоматические коммиты после изменений\r\n- ✅ **Error Recovery** — база паттернов, учится на ошибках\r\n- ✅ **Host-memory prompt caching** (`-cram`) — 3 модели на 8 ГБ VRAM\r\n- ✅ **Quality Gate (Critic)** — проверка и retry\r\n- ✅ **Pure Node.js** — без Python-зависимостей\r\n- ✅ **Self-learning skills** — эволюция до canon\r\n- ✅ **Multi-Strategy** — 2-3 плана + fallback\r\n\r\n---\r\n\r\n## 🚀 Quick Start\r\n\r\n```bash\r\ngit clone https://github.com/Dufermer/merge.git\r\ncd merge\r\n./install.sh          # Linux/macOS\r\n# или .\\install.ps1   # Windows\r\n```\r\n\r\nСистема автоматически:\r\n- Скачает llama.cpp (последний релиз)\r\n- Проверит наличие GPU и RAM\r\n- Установит Paperclip CLI и зависимости\r\n- Создаст конфигурацию адаптеров\r\n\r\nПосле установки:\r\n```bash\r\npowershell -ExecutionPolicy Bypass -File start_all.ps1\r\n```\r\n\r\n---\r\n\r\n## 📚 Документация\r\n\r\n| Файл | О чем |\r\n|------|-------|\r\n| [`23_ceo_comprehensive.md`](docs/23_ceo_comprehensive.md) | **CEO Agent — главный документ** |\r\n| [`24_graphify_integration.md`](docs/24_graphify_integration.md) | Graphify — knowledge graph интеграция |\r\n| [`00_OVERVIEW.md`](docs/00_OVERVIEW.md) | Общая архитектура с CEO |\r\n| [`17_ceo_agent.md`](docs/17_ceo_agent.md) | CEO Agent — базовое описание |\r\n| [`18_self_learning_skills.md`](docs/18_self_learning_skills.md) | Self-learning skills |\r\n| [`19_git_first.md`](docs/19_git_first.md) | Git-First (auto-commit) |\r\n| [`20_error_recovery.md`](docs/20_error_recovery.md) | Error Recovery Patterns |\r\n| [`21_multi_strategy.md`](docs/21_multi_strategy.md) | Multi-Strategy Planning |\r\n| [`22_project_context.md`](docs/22_project_context.md) | Project Context |\r\n| [`06_full_system_run.md`](docs/06_full_system_run.md) | Полный запуск и тесты |\r\n\r\nПолная документация: [`docs/`](docs/) (23 файла)\r\n\r\n---\r\n\r\n## 🛠 Технологический стек\r\n\r\n| Компонент | Назначение |\r\n|-----------|------------|\r\n| **CEO Agent** | Стратегический оркестратор (Memory, Skills, Git-First, Error Recovery, Multi-Strategy, Project Context) |\r\n| **llama.cpp** (`-cram`) | Host-memory prompt caching |\r\n| **Node.js Vector Store** | Семантическая память (all-MiniLM-L6-v2) |\r\n| **Vulkan backend** | Автоподхват NVIDIA GPU |\r\n| **GBNF-грамматики** | 100% structured output |\r\n| **Paperclip** | Оркестратор AI-агентов |\r\n| **@xenova/transformers** | Embeddings для vector search |\r\n| **Graphify** | Knowledge graph — анализ архитектуры кода |\r\n\r\n---\r\n\r\n## 📂 Структура проекта\r\n\r\n```\r\nmerge/\r\n├── README.md                          # ← этот файл (с CEO во главе!)\r\n├── ceoAgent.js                        # 🆕 CEO Agent — главный оркестратор\r\n├── PROJECT_CONTEXT.md                 # 🆕 Автообновляемый контекст проекта\r\n├── multiStrategy.gbnf                 # 🆕 GBNF для генерации стратегий\r\n├── start_all.ps1                      # Автоматический запуск инфраструктуры\r\n├── INSTALL.md                         # Подробная инструкция по установке\r\n├── CHANGELOG.md                       # История версий\r\n│\r\n├── memory/                            # 🆕 Память CEO\r\n│   ├── vector_store.json              #   Семантическая память (embeddings)\r\n│   ├── skills_vector_store.json       #   Skills (embeddings)\r\n│   ├── error_patterns.json            #   База паттернов ошибок\r\n│   ├── git_history.json               #   История авто-коммитов\r\n│   └── conversation_history.json      #   История диалога\r\n│\r\n├── llama_cpp/                         # Инференс-сервер и GGUF-модели\r\n│   ├── llama-server.exe\r\n│   ├── saiga_llama3_8b-q4_k_m.gguf\r\n│   ├── qwen2.5-coder-7b-instruct-q4_k_m.gguf\r\n│   └── smollm2-3.6b-instruct-q4_k_m.gguf\r\n│\r\n├── docs/                              # Полная документация (23 файла)\r\n│   ├── 00_OVERVIEW.md                 #   Архитектура с CEO\r\n│   ├── 17_ceo_agent.md                #   CEO Agent\r\n│   ├── 18_self_learning_skills.md     #   Skills\r\n│   ├── 19_git_first.md                #   Git-First\r\n│   ├── 20_error_recovery.md           #   Error Recovery\r\n│   ├── 21_multi_strategy.md           #   Multi-Strategy\r\n│   ├── 22_project_context.md          #   Project Context\r\n│   └── 23_ceo_comprehensive.md        #   CEO полное описание\r\n│\r\n├── data/                              # Данные для инструментов\r\n│   ├── pipeline_state.json\r\n│   └── conversation_history.json\r\n│\r\n└── skills/                            # Хранилище навыков\r\n    └── *.json                         # Шаблоны повторяемых операций\r\n```\r\n\r\n### Адаптеры Paperclip\r\n\r\n```\r\n~/.paperclip/adapter-plugins/\r\n├── ceo/                               # 🆕 CEO адаптер (входная точка)\r\n│   ├── index.js\r\n│   └── ceoDecision.gbnf\r\n│\r\n├── translator/                        # Переводчик\r\n├── compiler/                          # Компилятор\r\n│\r\n├── executor/                          # Исполнитель + CEO skills\r\n│   ├── index.js\r\n│   ├── memoryManager.js\r\n│   ├── skillManager.js\r\n│   ├── skillCreator.js\r\n│   ├── nodeVectorStore.js\r\n│   └── skills/\r\n│       ├── gitFirst.js               # 🆕 Git-First\r\n│       ├── errorRecovery.js           # 🆕 Error Recovery\r\n│       ├── multiStrategy.js           # 🆕 Multi-Strategy\r\n│       └── projectContext.js          # 🆕 Project Context\r\n│\r\n└── critic/                            # Критик\r\n```\r\n\r\n---\r\n\r\n## 📋 Системные требования\r\n\r\n- **OS:** Windows 10/11, Linux, macOS 13+\r\n- **GPU:** NVIDIA (RTX 3070+) с Vulkan-драйвером\r\n- **RAM:** ≥ 16 GB\r\n- **Диск:** ≥ 30 GB свободно (3 модели GGUF ~12 GB)\r\n- **Утилиты:** Node.js 18+, Python 3.10+, Git\r\n\r\n---\r\n\r\n## 📄 Лицензия\r\n\r\nMIT\r\n",
+      "timestamp": "2026-06-08T07:46:53.698Z"
+    },
+    {
+      "task": "какие основные компоненты в проекте по knowledge graph?",
+      "result": "Unknown task type",
+      "timestamp": "2026-06-08T07:47:33.713Z"
+    },
+    {
+      "task": "прочитай data/test_data.json, посчитай общий revenue и какая доля premium",
+      "result": "{\"users\":100,\"active\":75,\"premium\":25,\"revenue_per_user\":10}",
+      "timestamp": "2026-06-08T07:48:03.702Z"
+    },
+    {
+      "task": "создай файл data/generated_report.txt с содержимым 'Отчёт сгенерирован автоматически'",
+      "result": "Error after 3 attempts: File read error: ENOENT: no such file or directory, open 'C:\\Users\\rus\\Desktop\\merge\\файл data\\generated_report.txt'",
+      "timestamp": "2026-06-08T07:48:43.730Z"
+    },
+    {
+      "task": "сколько будет 10+20",
+      "result": "10+20 = 30",
+      "timestamp": "2026-06-08T07:49:13.907Z"
+    },
+    {
+      "task": "сколько будет 100+200",
+      "result": "100+200 = 300",
+      "timestamp": "2026-06-08T07:49:14.184Z"
+    },
+    {
+      "task": "сколько будет 1000+2000",
+      "result": "1000+2000 = 3000",
+      "timestamp": "2026-06-08T07:49:14.467Z"
+    },
+    {
+      "task": "прочитай файл data/server_config.json",
+      "result": "Error after 3 attempts: File read error: ENOENT: no such file or directory, open 'C:\\Users\\rus\\Desktop\\merge\\файл data\\server_config.json'",
+      "timestamp": "2026-06-08T07:49:56.873Z"
+    },
+    {
+      "task": "какой был порт в конфиге?",
+      "result": "Unknown task type",
+      "timestamp": "2026-06-08T07:50:21.893Z"
+    },
+    {
+      "task": "прочитай файл data/this_file_does_not_exist.txt",
+      "result": "Error after 3 attempts: File read error: ENOENT: no such file or directory, open 'C:\\Users\\rus\\Desktop\\merge\\файл data\\this_file_does_not_exist.txt'",
+      "timestamp": "2026-06-08T07:50:42.085Z"
+    },
+    {
+      "task": "абракадабра зима кекс",
+      "result": "Unknown task type",
+      "timestamp": "2026-06-08T07:51:07.277Z"
+    }
+  ]
+}

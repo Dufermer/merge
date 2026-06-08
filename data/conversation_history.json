@@ -2,53 +2,53 @@
   "messages": [
     {
       "role": "user",
-      "content": "сколько будет 2+2",
-      "timestamp": "2026-06-08T05:49:39.897Z"
+      "content": "прочитай файл data/server\\_config.json и скажи какой там порт",
+      "timestamp": "2026-06-08T06:35:12.911Z"
     },
     {
       "role": "ceo",
       "content": "2+2 = 4",
-      "timestamp": "2026-06-08T05:49:39.898Z"
+      "timestamp": "2026-06-08T06:35:12.911Z"
     },
     {
       "role": "user",
-      "content": "вычисли 10*5+3",
-      "timestamp": "2026-06-08T05:49:39.908Z"
+      "content": "прочитай файл data/server\\_config.json и скажи какой там порт",
+      "timestamp": "2026-06-08T06:35:43.445Z"
     },
     {
       "role": "ceo",
-      "content": "10*5+3 = 53",
-      "timestamp": "2026-06-08T05:49:39.909Z"
+      "content": "2+2 = 4",
+      "timestamp": "2026-06-08T06:35:43.446Z"
     },
     {
       "role": "user",
-      "content": "посчитай (8-2)/3",
-      "timestamp": "2026-06-08T05:49:39.918Z"
+      "content": "прочитай файл data/server\\_config.json и скажи какой там порт",
+      "timestamp": "2026-06-08T06:35:43.811Z"
     },
     {
       "role": "ceo",
-      "content": "8-2 = 6",
-      "timestamp": "2026-06-08T05:49:39.918Z"
+      "content": "2+2 = 4",
+      "timestamp": "2026-06-08T06:35:43.811Z"
     },
     {
       "role": "user",
-      "content": "24/6",
-      "timestamp": "2026-06-08T05:49:39.926Z"
+      "content": "2+5 \\=?&#x20;",
+      "timestamp": "2026-06-08T07:06:06.037Z"
     },
     {
       "role": "ceo",
-      "content": "24/6 = 4",
-      "timestamp": "2026-06-08T05:49:39.927Z"
+      "content": "2+5 = 7",
+      "timestamp": "2026-06-08T07:06:06.037Z"
     },
     {
       "role": "user",
-      "content": "найди функцию авторизации",
-      "timestamp": "2026-06-08T05:49:39.943Z"
+      "content": "2+5 \\=?&#x20;",
+      "timestamp": "2026-06-08T07:06:06.375Z"
     },
     {
       "role": "ceo",
-      "content": "Обработано: ������� ����� 2+2",
-      "timestamp": "2026-06-08T05:49:39.943Z"
+      "content": "2+5 = 7",
+      "timestamp": "2026-06-08T07:06:06.375Z"
     }
   ]
 }

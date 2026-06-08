@@ -9,10 +9,2166 @@
 
 
 ## Key Files
-- start_all.ps1
+- `start_all.ps1` — запуск всей инфраструктуры
+- `dagOrchestrator.js` — графовый оркестратор
+- `ceoAgent.js` — CEO диспетчер
+- `llama_cpp/` — директория с GGUF-моделями
+- `memory/` — векторная память и git-история
+- `docs/` — 20+ файлов документации
+
+- `dagOrchestrator.js` — графовый оркестратор
+- `ceoAgent.js` — CEO диспетчер
+- `llama_cpp/` — директория с GGUF-моделями
+- `memory/` — векторная память и git-история
+- `docs/` — 20+ файлов документации
+
+- `dagOrchestrator.js` — графовый оркестратор
+- `ceoAgent.js` — CEO диспетчер
+- `llama_cpp/` — директория с GGUF-моделями
+- `memory/` — векторная память и git-история
+- `docs/` — 20+ файлов документации
+
+- `dagOrchestrator.js` — графовый оркестратор
+- `ceoAgent.js` — CEO диспетчер
+- `llama_cpp/` — директория с GGUF-моделями
+- `memory/` — векторная память и git-история
+- `docs/` — 20+ файлов документации
+
+- `dagOrchestrator.js` — графовый оркестратор
+- `ceoAgent.js` — CEO диспетчер
+- `llama_cpp/` — директория с GGUF-моделями
+- `memory/` — векторная память и git-история
+- `docs/` — 20+ файлов документации
+
+- `dagOrchestrator.js` — графовый оркестратор
+- `ceoAgent.js` — CEO диспетчер
+- `llama_cpp/` — директория с GGUF-моделями
+- `memory/` — векторная память и git-история
+- `docs/` — 20+ файлов документации
+
+- `dagOrchestrator.js` — графовый оркестратор
+- `ceoAgent.js` — CEO диспетчер
+- `llama_cpp/` — директория с GGUF-моделями
+- `memory/` — векторная память и git-история
+- `docs/` — 20+ файлов документации
+
 
 ## Recent Changes
-- 2026-06-08: 24/6
+- 2026-06-08: 2+5 \=?&#x20;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+## Source
+
+- S
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Source
+
+- S
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

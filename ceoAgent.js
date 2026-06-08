@@ -57,19 +57,30 @@ async function processUserRequest(userInput) {
   }
 
   // ═══ MATH DETECTION (до памяти, чтобы не кешировать) ═══
-  const mathPattern = /(\d+\s*[\+\-\*\/]\s*\d+)|(сколько\s*(будет|получится))|(вычисл)|(посчитай)/i;
+  const mathPattern = /(\d+\s*[\+\-\*\/\(\)]\s*\d+)|(сколько\s*(будет|получится))|(вычисл)|(посчитай)/i;
   const isMath = mathPattern.test(userInput);
 
-  // ═══ ФАЗА 1: Поиск в памяти ═══
-  log("[CEO] Phase 1: Searching memory...");
-  const searchResult = await memoryManager.searchMemory(userInput, 5);
-  logs.push(...searchResult.logs);
+  // ═══ COMPLEX TASK DETECTION (до памяти, чтобы не отвечать из кэша) ═══
+  // Задача считается сложной если содержит несколько глаголов действия
+  const actionVerbs = /(прочитай|найди|сделай|умножь|отчитайся|напиши|создай|удали|обнови|запусти|останови|перезапусти|выполни|скачай|установи)/gi;
+  const actionMatches = userInput.match(actionVerbs);
+  const isComplex = actionMatches && actionMatches.length >= 2;
+  if (isComplex) log(`[CEO] Complex task detected: ${actionMatches.length} action verbs`);
 
+  // ═══ ФАЗА 1: Поиск в памяти (ПРОПУСК для сложных задач) ═══
   let memoryHit = null;
-  if (!isMath && searchResult.results.length > 0 && searchResult.results[0].similarity >= 0.6) {
-    memoryHit = searchResult.results[0];
-    fromMemory = true;
-    log(`[CEO] Memory hit! similarity=${memoryHit.similarity}`);
+  if (!isMath && !isComplex) {
+    log("[CEO] Phase 1: Searching memory...");
+    const searchResult = await memoryManager.searchMemory(userInput, 5);
+    logs.push(...searchResult.logs);
+
+    if (searchResult.results.length > 0 && searchResult.results[0].similarity >= 0.6) {
+      memoryHit = searchResult.results[0];
+      fromMemory = true;
+      log(`[CEO] Memory hit! similarity=${memoryHit.similarity}`);
+    }
+  } else {
+    log(`[CEO] Phase 1: Skipped (math=${isMath}, complex=${isComplex})`);
   }
 
   if (memoryHit) {

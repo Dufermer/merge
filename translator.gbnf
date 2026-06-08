@@ -1,6 +1,6 @@
 root       ::= "{" ws "\"intent\"" ws ":" ws intent-val "," ws "\"target\"" ws ":" ws target-val "," ws "\"params\"" ws ":" ws object ws "}"
-intent-val ::= "\"update_schema\"" | "\"add_component\"" | "\"fix_bug\"" | "\"refactor\"" | "\"other\""
-target-val ::= "\"hermes\"" | "\"paperclip\"" | "\"database\"" | "\"api\"" | "\"other\""
+intent-val ::= "\"calculate\"" | "\"read_file\"" | "\"write_file\"" | "\"search\"" | "\"update_schema\"" | "\"add_component\"" | "\"fix_bug\"" | "\"refactor\"" | "\"other\""
+target-val ::= "\"file\"" | "\"database\"" | "\"api\"" | "\"web\"" | "\"hermes\"" | "\"paperclip\"" | "\"other\""
 string     ::= "\"" ( [^"\\] | "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]) )* "\""
 object     ::= "{" ws (string ws ":" ws value ("," ws string ws ":" ws value)*)? ws "}"
 value      ::= string | number | object | array | "true" | "false" | "null"

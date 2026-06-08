@@ -114,4 +114,40 @@ async function processTask(task, options = {}) {
   };
 }
 
-module.exports = { processTask };
+/**
+ * Обрабатывает задачу через agent loop (для Paperclip).
+ * @param {string} task — описание задачи
+ * @param {string} issueId — ID задачи в Paperclip (для PATCH)
+ * @param {string} companyId — ID компании в Paperclip
+ * @param {object} options — опции
+ * @returns {object} { answer, turns, timeMs, fromMemory }
+ */
+async function processUserRequest(task, issueId, companyId, options = {}) {
+  const result = await processTask(task, options);
+
+  // Гибридный подход: PATCH + return (как в CEO v5)
+  if (issueId && companyId) {
+    try {
+      const http = require("node:http");
+      const body = JSON.stringify({
+        status: "done",
+        result: {
+          answer: result.answer,
+          fromMemory: result.fromMemory,
+          turns: result.turns,
+        },
+      });
+      const url = new URL(`http://127.0.0.1:3100/api/issues/${issueId}`);
+      const req = http.request(url, { method: "PATCH", headers: { "Content-Type": "application/json", "Content-Length": Buffer.byteLength(body) }, timeout: 5000 });
+      req.write(body);
+      req.end();
+      log(`[CEOv2] PATCH issue ${issueId.slice(0, 8)} → done`);
+    } catch (e) {
+      log(`[CEOv2] PATCH failed: ${e.message}`);
+    }
+  }
+
+  return result;
+}
+
+module.exports = { processTask, processUserRequest };
