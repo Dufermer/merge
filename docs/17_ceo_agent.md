@@ -43,17 +43,57 @@ User Input
 
 ### Хранилище
 
-**JSON fallback** — всегда доступен:
+### JSON fallback (всегда доступен)
+
 ```
 ~/.paperclip/adapter-plugins/executor/memory_store.json
 ```
 
-**ChromaDB** (опционально, если Python chromadb установлен):
+### ChromaDB (опционально, для семантического поиска)
+
 ```
 C:\Users\rus\Desktop\merge\memory\chroma_db\
 ```
 
-### Conversation history
+Для запуска ChromaDB сервера:
+```bash
+python -c "
+import chromadb
+from chromadb.config import Settings
+client = chromadb.PersistentClient(
+    path='C:/Users/rus/Desktop/merge/memory/chroma_db',
+    settings=Settings(anonymized_telemetry=False)
+)
+print('ChromaDB ready on :8123')
+input()  # держит сервер запущенным
+"
+```
+
+### Гибридный поиск (Hybrid Search)
+
+Система использует двухуровневый поиск:
+
+| Уровень | Метод | Время | Точность | Условие |
+|---------|-------|-------|----------|---------|
+| 1 | Keyword (синонимы) | ~1ms | Средняя | Всегда доступен |
+| 2 | Vector (ChromaDB) | ~50ms | Высокая | Если keyword sim < 0.7 |
+
+**Алгоритм:**
+1. Keyword search с синонимами (русский/английский: "login" ↔ "avtorizatsi", "search" ↔ "naidi")
+2. Если лучший результат keyword < 0.7 → запускается vector search
+3. Результаты объединяются (mergeResults), дубликаты удаляются
+4. Возвращаются топ-K результатов, отсортированных по similarity
+
+**Пример:**
+```
+Запрос: "где обработка логина?"
+Keyword search: similarity=0.33 ("logina"→"avtorizatsi" через синонимы)
+  → similarity < 0.7 → Vector search
+Vector search: similarity=0.92 ("логин"≈"авторизация" семантически)
+  → Результат: "handleLogin in src/auth.js:45"
+```
+
+## Conversation history
 
 ```
 C:\Users\rus\Desktop\merge\data\conversation_history.json
@@ -122,7 +162,11 @@ CEO адаптер — точка входа для всех пользоват�
 
 ## Ограничения
 
-1. **Keyword-based поиск:** Без ChromaDB семантический поиск работает на совпадении слов. Для точных совпадений — отлично, для синонимов — хуже.
-2. **Similarity threshold = 0.85:** Высокий порог предотвращает ложные срабатывания. При необходимости можно снизить.
-3. **Максимум 200 записей:** Память автоматически обрезается до 200 последних записей.
+1. **Семантическая память (ChromaDB):** Для vector search требуется запущенный ChromaDB сервер:
+   ```bash
+   python -c "import chromadb; chromadb.PersistentClient(path='C:/Users/rus/Desktop/merge/memory/chroma_db')"
+   ```
+   Без него — keyword-only режим с синонимами.
+
+2. **Similarity threshold = 0.85:** Высокий порог предотвращает ложные срабатывания.
 4. **Conversation history:** 10 сообщений (не зависит от контекстного окна LLM).

@@ -113,7 +113,7 @@
 | **Vulkan backend** | Автоподхват NVIDIA GPU без установки CUDA Toolkit |
 | **GBNF-грамматики** | 100% structured output — JSON задаётся BNF-грамматикой, модель не может отклониться |
 | **Paperclip** | Оркестратор AI-агентов (heartbeat, resultJson, адаптеры) |
-| **CEO Agent** | Диспетчер с долговременной памятью, кэширование повторных запросов |
+| **CEO Agent** | Диспетчер с гибридной памятью (keyword + vector semantic search), conversation history |
 | **DAG Orchestrator** | Параллельное исполнение графа (concurrency ≤ 2) с retry на каждую ноду |
 | **Database Executor** | Безопасные SQL-запросы (SQLite/Postgres), авто-бэкап, блокировка DROP/DELETE без WHERE |
 | **Codebase Analyzer** | AST-индекс и семантический поиск по коду |
