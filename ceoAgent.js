@@ -14,6 +14,7 @@ const EXECUTOR_DIR = path.join(os.homedir(), ".paperclip/adapter-plugins/executo
 const MEMORY_MANAGER_PATH = path.join(EXECUTOR_DIR, "memoryManager.js");
 const SKILL_MANAGER_PATH = path.join(EXECUTOR_DIR, "skillManager.js");
 const SKILL_CREATOR_PATH = path.join(EXECUTOR_DIR, "skillCreator.js");
+const ERROR_RECOVERY_PATH = path.join(EXECUTOR_DIR, "skills/errorRecovery.js");
 
 async function processUserRequest(userInput) {
   const startTime = Date.now();
@@ -113,6 +114,8 @@ async function processUserRequest(userInput) {
 
     if (action === "delegate") {
       log("[CEO] Delegating...");
+      let context = { timeout: 30000 };
+
       try {
         const dagNodes = [{ id: "n1", action: "process", params: { input: userInput } }];
         const dagOrch = require("C:\\Users\\rus\\Desktop\\merge\\dagOrchestrator.js");
@@ -122,15 +125,47 @@ async function processUserRequest(userInput) {
           ? JSON.stringify(dagResult, null, 2)
           : String(dagResult);
 
-        // Создаём skill из успешной составной задачи
         if (dagNodes.length >= 2) {
           const creation = await skillCreator.analyzeAndCreateSkill(userInput, dagNodes, dagResult);
           logs.push(...(creation.logs || []));
           if (creation.created) log(`[CEO] New skill: ${creation.skill.id}`);
         }
       } catch (e) {
-        log(`[CEO] DAG error: ${e.message}`);
-        finalAnswer = `Задача принята: "${userInput}"`;
+        log(`[CEO] Error: ${e.message}`);
+
+        // Error Recovery
+        try {
+          const ErrorRecovery = require(ERROR_RECOVERY_PATH);
+          const er = new ErrorRecovery();
+          const pattern = await er.findRecoveryPattern(e);
+
+          if (pattern && !pattern.ineffective) {
+            log(`[CEO] Recovery pattern found: ${pattern.signature} (${Math.round(pattern.successRate * 100)}% success)`);
+            const newContext = await er.applyRecovery(pattern, context);
+            log(`[CEO] Applied recovery: ${pattern.recoveryAction}`);
+
+            // Retry
+            try {
+              const dagOrch = require("C:\\Users\\rus\\Desktop\\merge\\dagOrchestrator.js");
+              const retryResult = await dagOrch.orchestrateDag(
+                { nodes: [{ id: "n1", action: "process", params: { input: userInput, ...newContext } }] },
+                null, null
+              );
+              finalAnswer = typeof retryResult === "object" ? JSON.stringify(retryResult, null, 2) : String(retryResult);
+              await er.logError(e, pattern.recoveryAction, true);
+              log("[CEO] Recovery retry SUCCESS");
+            } catch (retryErr) {
+              await er.logError(e, pattern.recoveryAction, false);
+              finalAnswer = `Ошибка (recovery failed): ${retryErr.message}`;
+            }
+          } else {
+            await er.logError(e, "none", false);
+            finalAnswer = `Ошибка: ${e.message}`;
+          }
+        } catch (erErr) {
+          log(`[CEO] ErrorRecovery error: ${erErr.message}`);
+          finalAnswer = `Ошибка: ${e.message}`;
+        }
       }
     } else {
       finalAnswer = `Обработано: ${userInput}`;

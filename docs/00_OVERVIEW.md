@@ -79,6 +79,8 @@ User Input (русский "грязный" текст)
 | `16_database_executor.md` | Database Executor — безопасная работа с SQLite/PostgreSQL |
 | `17_ceo_agent.md` | CEO Agent & Memory — диспетчер с долговременной памятью |
 | `18_self_learning_skills.md` | Self-Learning Skills — автосоздание шаблонов из успешных задач |
+| `19_git_first.md` | Git-First — автоматические коммиты после изменений |
+| `20_error_recovery.md` | Error Recovery — обучение на ошибках, паттерны восстановления |
 
 ## Установка
 
@@ -155,6 +157,8 @@ Executor   → ⚠️ требует запуска :8083 (SmolLM2 не запу
 - ✅ **Database Executor: безопасное выполнение SQL-запросов с авто-бэкапом и блокировкой деструктивных операций (databaseExecutor.js + db_query tool)**
 - ✅ **CEO Agent: диспетчер с долговременной памятью — повторные запросы отвечает мгновенно из кэша (ceoAgent.js + memoryManager.js)**
 - ✅ **Self-Learning Skills: автосоздание шаблонов из успешных задач, эволюция до canon (skillManager.js + skillCreator.js)**
+- ✅ **Git-First: автоматические git-коммиты после каждого успешного изменения кода (gitFirst.js)**
+- ✅ **Error Recovery: система учится на ошибках, применяет проверенные паттерны восстановления (errorRecovery.js)**
 
 ## Roadmap (следующие шаги)
 

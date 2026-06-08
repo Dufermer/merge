@@ -170,7 +170,7 @@ merge/
 │   ├── qwen2.5-coder-7b-instruct-q4_k_m.gguf  # Модель Компилятора (~4.7 GB)
 │   └── smollm2-3.6b-instruct-q4_k_m.gguf      # Модель Исполнителя/Критика (~2.5 GB)
 │
-├── docs/                              # 📚 Полная документация (18 файлов)
+├── docs/                              # 📚 Полная документация (20 файлов)
 │   ├── 00_OVERVIEW.md                 #   Общая карта системы
 │   ├── 01_llama_cpp_setup.md          #   Установка llama.cpp
 │   ├── 02_model_translator.md         #   Спецификация Переводчика
@@ -189,12 +189,23 @@ merge/
 │   ├── 15_code_patcher.md           #   Генерация и применение патчей
 │   ├── 16_database_executor.md      #   Безопасная работа с БД
 │   ├── 17_ceo_agent.md             #   CEO диспетчер с памятью
-│   └── 18_self_learning_skills.md  #   Автосоздание шаблонов
+│   ├── 18_self_learning_skills.md  #   Автосоздание шаблонов
+│   ├── 19_git_first.md            #   Автоматические коммиты
+│   └── 20_error_recovery.md       #   Обучение на ошибках
 │
 ├── data/                              # 📁 Данные для инструментов
 │   ├── pipeline_state.json            #   Состояние пайплайна (для Critic)
 │   ├── conversation_history.json      #   История диалога CEO
-│   └── skill_creation.log             #   Лог создания/использования skills
+│   ├── skill_creation.log             #   Лог создания/использования skills
+│   ├── auth_module.js                #   Тестовый модуль для codebase_search
+│   ├── vulnerable_function.js        #   Тестовый файл для code_patch
+│   └── test_users.db                 #   Тестовая SQLite БД
+│
+├── memory/                            # 🧠 Данные семантической памяти
+│   ├── vector_store.json             #   Vector embeddings (Node.js)
+│   ├── skills_vector_store.json      #   Skills vector storage
+│   ├── git_history.json              #   История git-коммитов
+│   └── error_patterns.json           #   Паттерны восстановления после ошибок
 │
 ├── skills/                            # 🎯 Хранилище навыков (skills)
 │   └── *.json                         #   Шаблоны повторяемых операций
@@ -218,9 +229,13 @@ merge/
     │   ├── codePatcher.js
     │   ├── codePatch.gbnf
     │   ├── databaseExecutor.js
+    │   ├── nodeVectorStore.js
     │   ├── memoryManager.js
     │   ├── skillManager.js
     │   ├── skillCreator.js
+    │   ├── skills/
+    │   │   ├── gitFirst.js
+    │   │   └── errorRecovery.js
     │   ├── executor.gbnf
     │   ├── executor.log
     │   └── snapshots/
@@ -257,6 +272,8 @@ merge/
 | [`16_database_executor.md`](docs/16_database_executor.md) | Безопасная работа с SQLite/PostgreSQL, авто-бэкап, блокировка DROP |
 | [`17_ceo_agent.md`](docs/17_ceo_agent.md) | CEO диспетчер с долговременной памятью, conversation history |
 | [`18_self_learning_skills.md`](docs/18_self_learning_skills.md) | Self-Learning Skills, эволюция от new до canon |
+| [`19_git_first.md`](docs/19_git_first.md) | Git-First, автоматические коммиты после изменений кода |
+| [`20_error_recovery.md`](docs/20_error_recovery.md) | Error Recovery, обучение на ошибках, паттерны восстановления |
 
 ---
 

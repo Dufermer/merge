@@ -1,0 +1,22 @@
+{
+  "patterns": [
+    {
+      "signature": "ECONNREFUSED:8081",
+      "recoveryAction": "restart_server",
+      "count": 2,
+      "successCount": 2,
+      "successRate": 1,
+      "lastSeen": "2026-06-08T04:54:22.107Z",
+      "firstSeen": "2026-06-08T04:54:22.107Z"
+    },
+    {
+      "signature": "Timeout:30000",
+      "recoveryAction": "increase_timeout",
+      "count": 3,
+      "successCount": 2,
+      "successRate": 0.67,
+      "lastSeen": "2026-06-08T04:54:22.108Z",
+      "firstSeen": "2026-06-08T04:54:22.108Z"
+    }
+  ]
+}
