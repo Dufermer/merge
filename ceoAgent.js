@@ -56,13 +56,17 @@ async function processUserRequest(userInput) {
     log(`[CEO] Skill found: "${matchedSkill.name}" (sim=${matchedSkill.similarity}, method=${skillSearch.method})`);
   }
 
+  // ═══ MATH DETECTION (до памяти, чтобы не кешировать) ═══
+  const mathPattern = /(\d+\s*[\+\-\*\/]\s*\d+)|(сколько\s*(будет|получится))|(вычисл)|(посчитай)/i;
+  const isMath = mathPattern.test(userInput);
+
   // ═══ ФАЗА 1: Поиск в памяти ═══
   log("[CEO] Phase 1: Searching memory...");
   const searchResult = await memoryManager.searchMemory(userInput, 5);
   logs.push(...searchResult.logs);
 
   let memoryHit = null;
-  if (searchResult.results.length > 0 && searchResult.results[0].similarity >= 0.4) {
+  if (!isMath && searchResult.results.length > 0 && searchResult.results[0].similarity >= 0.6) {
     memoryHit = searchResult.results[0];
     fromMemory = true;
     log(`[CEO] Memory hit! similarity=${memoryHit.similarity}`);
@@ -121,7 +125,26 @@ async function processUserRequest(userInput) {
 
     const q = userInput.toLowerCase();
     let action = "answer_directly";
-    if (q.includes("найд") || q.includes("search") || q.includes("read") ||
+
+    if (isMath) {
+      action = "calculate_directly";
+    }
+
+    if (action === "calculate_directly") {
+      log("[CEO] Detected math question. Computing directly...");
+      try {
+        // Extract expression
+        const exprMatch = userInput.match(/(\d+\s*[\+\-\*\/\(\)]\s*\d+(?:\s*[\+\-\*\/\(\)]\s*\d+)*)/);
+        const expr = exprMatch ? exprMatch[1].replace(/\s/g, "") : "0";
+        const fn = new Function(`return (${expr})`);
+        const result = fn();
+        finalAnswer = `${expr} = ${result}`;
+        log(`[CEO] Math result: ${expr} = ${result}`);
+      } catch (e) {
+        log(`[CEO] Math error: ${e.message}`);
+        finalAnswer = `Ошибка вычисления: ${e.message}`;
+      }
+    } else if (q.includes("найд") || q.includes("search") || q.includes("read") ||
         q.includes("проч") || q.includes("чит") || q.includes("backup") ||
         q.includes("бэкап") || q.includes("файл") || q.includes("file")) {
       action = "delegate";
@@ -199,7 +222,7 @@ async function processUserRequest(userInput) {
           finalAnswer = `Ошибка: ${e.message}`;
         }
       }
-    } else {
+    } else if (action !== "calculate_directly") {
       finalAnswer = `Обработано: ${userInput}`;
     }
   }
