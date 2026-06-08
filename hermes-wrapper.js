@@ -59,12 +59,24 @@ const TOOL_REGISTRY = {
   },
 
   list_files: {
-    description: "List files in a directory. Params: { dir: string }",
+    description: "List files in a directory. Params: { dir: string }. Returns file count, folder count, and names.",
     execute: async (params) => {
       try {
         const dir = params.dir || params.path || ".";
-        const files = fs.readdirSync(dir);
-        return { data: files.join("\n"), format: "text" };
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        const files = entries.filter(e => e.isFile()).map(e => e.name);
+        const folders = entries.filter(e => e.isDirectory()).map(e => e.name);
+        return {
+          data: {
+            path: dir,
+            files: files,
+            folders: folders,
+            file_count: files.length,
+            folder_count: folders.length,
+            total: entries.length,
+          },
+          format: "json",
+        };
       } catch (e) {
         return { error: `Directory read error: ${e.message}` };
       }
@@ -340,9 +352,20 @@ function buildFallbackDecision(task, context) {
     };
   }
 
-  // List directory
-  if (taskLower.includes("list") || taskLower.includes("список") || taskLower.includes("директори")) {
-    return { thought: "Listing directory", tool: "list_files", params: { dir: "." }, done: false };
+  // List directory / count files
+  if (taskLower.includes("list") || taskLower.includes("список") || taskLower.includes("директори") || 
+      taskLower.includes("сколько файлов") || taskLower.includes("сколько папок") || taskLower.includes("файлов в")) {
+    // Extract directory path from task
+    let dir = ".";
+    const dirMatch = task.match(/в\s+(?:директори(?:и|ю)?\s+)?([\w.\/\\-]+)/i) || 
+                    task.match(/(?:data[\/\\]|папк[ау]\s+)?([\w.\/\\-]+)/i);
+    if (dirMatch) {
+      const raw = dirMatch[1];
+      dir = raw.includes(":") ? raw : `C:\\Users\\rus\\Desktop\\merge\\${raw}`;
+    } else if (taskLower.includes("рабочем столе") || taskLower.includes("desktop")) {
+      dir = "C:\\Users\\rus\\Desktop";
+    }
+    return { thought: `Counting files in ${dir}`, tool: "list_files", params: { dir }, done: false };
   }
 
   return { thought: "Unknown task type", tool: null, params: {}, done: true, error: "Unknown task type" };
@@ -413,6 +436,20 @@ function observe(result, decision, context) {
   if (!context.complex) {
     if (result.error) {
       log(`[OBSERVE] Error in ${decision.tool}: ${result.error}`);
+    } else if (result.data && typeof result.data === "object") {
+      // Handle JSON objects (e.g., list_files result)
+      if (result.data.file_count !== undefined) {
+        const msg = `В директории ${result.data.path}: ${result.data.file_count} файлов, ${result.data.folder_count} папок, всего ${result.data.total}`;
+        context.completed = true;
+        context.finalAnswer = msg;
+        log(`[OBSERVE] Task completed: ${msg}`);
+      } else {
+        // Generic object — convert to string
+        const str = JSON.stringify(result.data, null, 2);
+        context.completed = true;
+        context.finalAnswer = str;
+        log(`[OBSERVE] Task completed: ${str.slice(0, 100)}`);
+      }
     } else if (result.data) {
       const mathMatch = result.data.match(/= \d+$/);
       const fileContent = result.data.length > 5 && !result.data.includes("error");
