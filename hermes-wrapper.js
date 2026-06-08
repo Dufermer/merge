@@ -254,15 +254,33 @@ function buildFallbackDecision(task, context) {
     };
   }
 
-  // File read detection
+  // File read detection — используем ОРИГИНАЛЬНЫЙ task (не lowercase) для путей
   if (taskLower.includes("прочитай") || taskLower.includes("читай") || taskLower.includes("read") || taskLower.includes("файл") || taskLower.includes("открой")) {
-    // Try to extract path from task — normalize backslashes
-    const normalizedTask = taskLower.replace(/\\\\/g, "/");
-    const pathMatch = normalizedTask.match(/(?:data[\/\\]|файл\s+)?([\w.\/\\-]+(?:\.\w+))/);
+    // Извлекаем путь из ОРИГИНАЛЬНОГО task (для сохранения регистра Windows-путей)
+    const pathRegex = /(?:data[\/\\]|файл\s+)?([\w.:\/\\-]+(?:\.\w+))/i;
+    const pathMatch = task.match(pathRegex);
     const basePath = "C:\\Users\\rus\\Desktop\\merge\\";
-    const filePath = pathMatch
-      ? (pathMatch[0].includes(":") ? pathMatch[0].replace(/\\/g, "\\\\") : basePath + pathMatch[1])
-      : basePath + "data\\test.txt";
+
+    let filePath = "";
+    if (pathMatch) {
+      // Use capture group if available, otherwise strip prefix from full match
+      const rawPath = pathMatch[1] || pathMatch[0].replace(/^(?:data[\/\\]|файл\s+)/i, "").trim();
+      // Если это уже абсолютный Windows путь (C:\...) — используем как есть
+      if (/^[A-Za-z]:[\/\\]/.test(rawPath)) {
+        // Нормализуем обратные слэши в двойные для строки JS
+        filePath = rawPath.replace(/\\/g, "\\\\");
+      } else if (rawPath.match(/^\//)) {
+        filePath = rawPath; // Unix-style absolute
+      } else {
+        // Относительный путь — добавляем basePath
+        filePath = basePath + rawPath;
+      }
+      filePath = filePath.replace(/\//g, "\\");
+    } else {
+      filePath = basePath + "data\\test.txt";
+    }
+
+    log(`[THINK] File read: ${filePath}`);
     return {
       thought: `Reading file: ${filePath}`,
       tool: "read_file",
