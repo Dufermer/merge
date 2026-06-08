@@ -1,0 +1,51 @@
+[
+  [
+    "1",
+    "Read file delegation",
+    "✅ PASSED",
+    "in_progress",
+    ""
+  ],
+  [
+    "2",
+    "Math (no delegation)",
+    "✅ PASSED",
+    "done",
+    "15*3=45"
+  ],
+  [
+    "3",
+    "Complex (no delegation)",
+    "✅ PASSED",
+    "done",
+    ""
+  ],
+  [
+    "4",
+    "Delegation with error",
+    "❌ FAILED",
+    "in_progress",
+    ""
+  ],
+  [
+    "5",
+    "Parallel 1",
+    "✅ PASSED",
+    "in_progress",
+    ""
+  ],
+  [
+    "5",
+    "Parallel 2",
+    "❌ FAILED",
+    "blocked",
+    ""
+  ],
+  [
+    "5",
+    "Parallel 3",
+    "❌ FAILED",
+    "blocked",
+    ""
+  ]
+]

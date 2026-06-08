@@ -132,19 +132,37 @@ async function processTask(issue) {
     log(`[HB] File error: ${e.message}`);
   }
 
-  // Step 4: Update issue with result
+  // Step 5: Update issue with result + update parent if sub-issue
   if (result.success) {
     await httpRequest(`${PAPERCLIP_API}/issues/${issueId}`, "PATCH", {
       status: "done",
       result: { answer: result.content, source: "read_file" },
     });
     log(`[HB] ✅ Done: "${result.content}"`);
+
+    // If this is a sub-issue, update parent too
+    if (issue.parentId) {
+      await httpRequest(`${PAPERCLIP_API}/issues/${issue.parentId}`, "PATCH", {
+        status: "done",
+        result: { answer: result.content, source: "read_file" },
+      });
+      log(`[HB] ✅ Parent ${issue.parentId.slice(0, 8)} updated to done`);
+    }
   } else {
     await httpRequest(`${PAPERCLIP_API}/issues/${issueId}`, "PATCH", {
       status: "failed",
       result: { error: result.error },
     });
     log(`[HB] ❌ Failed: ${result.error}`);
+
+    // If this is a sub-issue, update parent too
+    if (issue.parentId) {
+      await httpRequest(`${PAPERCLIP_API}/issues/${issue.parentId}`, "PATCH", {
+        status: "failed",
+        result: { error: result.error },
+      });
+      log(`[HB] ❌ Parent ${issue.parentId.slice(0, 8)} updated to failed`);
+    }
   }
 
   processedIds.add(issueId);

@@ -89,6 +89,16 @@
       "task": "абракадабра зима кекс",
       "result": "Unknown task type",
       "timestamp": "2026-06-08T07:51:07.277Z"
+    },
+    {
+      "task": "прочитай файл data/server\\_config.json и скажи какой там порт",
+      "result": "Error after 3 attempts: File read error: ENOENT: no such file or directory, open 'C:\\Users\\rus\\Desktop\\merge\\файл data\\server\\_config.json'",
+      "timestamp": "2026-06-08T09:29:36.181Z"
+    },
+    {
+      "task": "сколько будет 15*3",
+      "result": "15*3 = 45",
+      "timestamp": "2026-06-08T09:35:15.026Z"
     }
   ]
 }
