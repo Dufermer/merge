@@ -162,6 +162,8 @@ merge/
 ├── dagOrchestrator.js                 # 📦 Графовый оркестратор нод
 ├── ceoAgent.js                        # 🧠 CEO диспетчер с памятью
 ├── ceoDecision.gbnf                   # 📜 GBNF для решений CEO
+├── skillManager.js                    # 🎯 Менеджер навыков (skills)
+├── skillCreator.js                    # 🎯 Создатель навыков из DAG
 │
 ├── llama_cpp/                         # 🏗 Инференс-сервер и GGUF-модели
 │   ├── llama-server.exe               #   Бинарный файл llama.cpp
@@ -169,7 +171,7 @@ merge/
 │   ├── qwen2.5-coder-7b-instruct-q4_k_m.gguf  # Модель Компилятора (~4.7 GB)
 │   └── smollm2-3.6b-instruct-q4_k_m.gguf      # Модель Исполнителя/Критика (~2.5 GB)
 │
-├── docs/                              # 📚 Полная документация (17 файлов)
+├── docs/                              # 📚 Полная документация (18 файлов)
 │   ├── 00_OVERVIEW.md                 #   Общая карта системы
 │   ├── 01_llama_cpp_setup.md          #   Установка llama.cpp
 │   ├── 02_model_translator.md         #   Спецификация Переводчика
@@ -187,10 +189,16 @@ merge/
 │   ├── 14_terminal_executor.md       #   Безопасное выполнение shell-команд
 │   ├── 15_code_patcher.md           #   Генерация и применение патчей
 │   ├── 16_database_executor.md      #   Безопасная работа с БД
-│   └── 17_ceo_agent.md             #   CEO диспетчер с памятью
+│   ├── 17_ceo_agent.md             #   CEO диспетчер с памятью
+│   └── 18_self_learning_skills.md  #   Автосоздание шаблонов
 │
 ├── data/                              # 📁 Данные для инструментов
-│   └── pipeline_state.json            #   Состояние пайплайна (для Critic)
+│   ├── pipeline_state.json            #   Состояние пайплайна (для Critic)
+│   ├── conversation_history.json      #   История диалога CEO
+│   └── skill_creation.log             #   Лог создания/использования skills
+│
+├── skills/                            # 🎯 Хранилище навыков (skills)
+│   └── *.json                         #   Шаблоны повторяемых операций
 │
 └── logs/                              # 📋 Логи (PID-файлы для скриптов)
 
@@ -247,6 +255,7 @@ merge/
 | [`15_code_patcher.md`](docs/15_code_patcher.md) | Генерация и применение патчей к коду через LLM с валидацией |
 | [`16_database_executor.md`](docs/16_database_executor.md) | Безопасная работа с SQLite/PostgreSQL, авто-бэкап, блокировка DROP |
 | [`17_ceo_agent.md`](docs/17_ceo_agent.md) | CEO диспетчер с долговременной памятью, conversation history |
+| [`18_self_learning_skills.md`](docs/18_self_learning_skills.md) | Self-Learning Skills, эволюция от new до canon |
 
 ---
 

@@ -78,6 +78,7 @@ User Input (русский "грязный" текст)
 | `15_code_patcher.md` | Code Patcher — генерация и применение патчей через LLM |
 | `16_database_executor.md` | Database Executor — безопасная работа с SQLite/PostgreSQL |
 | `17_ceo_agent.md` | CEO Agent & Memory — диспетчер с долговременной памятью |
+| `18_self_learning_skills.md` | Self-Learning Skills — автосоздание шаблонов из успешных задач |
 
 ## Установка
 
@@ -153,6 +154,7 @@ Executor   → ⚠️ требует запуска :8083 (SmolLM2 не запу
 - ✅ **Code Patcher: генерация и применение патчей к коду через LLM с верификацией и rollback (codePatcher.js + code_patch tool)**
 - ✅ **Database Executor: безопасное выполнение SQL-запросов с авто-бэкапом и блокировкой деструктивных операций (databaseExecutor.js + db_query tool)**
 - ✅ **CEO Agent: диспетчер с долговременной памятью — повторные запросы отвечает мгновенно из кэша (ceoAgent.js + memoryManager.js)**
+- ✅ **Self-Learning Skills: автосоздание шаблонов из успешных задач, эволюция до canon (skillManager.js + skillCreator.js)**
 
 ## Roadmap (следующие шаги)
 

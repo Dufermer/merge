@@ -1,0 +1,53 @@
+{
+  "id": "skill_1780893222595_l0or",
+  "intent": "prochitai config.yaml, naidi port, sdelai",
+  "description": "prochitai config.yaml, naidi port, sdelai backup i otchitisya",
+  "dag_template": {
+    "nodes": [
+      {
+        "id": "n1",
+        "action": "read_file",
+        "params": {},
+        "depends_on": []
+      },
+      {
+        "id": "n2",
+        "action": "process",
+        "params": {},
+        "depends_on": [
+          "n1"
+        ]
+      },
+      {
+        "id": "n3",
+        "action": "backup",
+        "params": {},
+        "depends_on": [
+          "n1"
+        ]
+      },
+      {
+        "id": "n4",
+        "action": "report",
+        "params": {},
+        "depends_on": [
+          "n2",
+          "n3"
+        ]
+      }
+    ]
+  },
+  "tags": [
+    "backup",
+    "config"
+  ],
+  "status": "canon",
+  "created": "2026-06-08T04:33:42.595Z",
+  "updated": "2026-06-08T04:33:42.595Z",
+  "stats": {
+    "use_count": 6,
+    "success_count": 5,
+    "fail_count": 1,
+    "confidence": 0.83
+  }
+}
