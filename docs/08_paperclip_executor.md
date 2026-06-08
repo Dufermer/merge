@@ -108,6 +108,21 @@ const TOOLS = {
     // возвращает топ-3 результата с confidence score
     // извлекает фрагмент кода для лучшего совпадения
   },
+
+  /**
+   * code_patch — генерация и применение патчей к коду через LLM.
+   * Требует: SmolLM2 на :8083 + codePatch.gbnf
+   * Модуль: codePatcher.js
+   * Pipeline: generatePatch → validatePatch → applyPatch → verifyWithTests
+   * params: { filePath, functionName, modificationType, context, testCommand }
+   * modificationType: add_try_catch | add_logging | refactor | fix_bug
+   */
+  code_patch: async (params) => {
+    // 1. generatePatch — LLM генерирует модифицированный код
+    // 2. validatePatch — Babel проверяет синтаксис
+    // 3. applyPatch — создаёт backup, заменяет функцию в файле
+    // 4. verifyWithTests — запускает тесты, rollback при ошибке
+  },
 };
 ```
 
